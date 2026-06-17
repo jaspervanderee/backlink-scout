@@ -2,12 +2,23 @@
 
 import { useState, useTransition } from "react";
 import { createProspectingBrief } from "@/app/actions/create-brief";
+import { generateSearchPlan } from "@/app/actions/generate-search-plan";
+import { SearchPlanPreview } from "@/app/components/search-plan-preview";
+import type { SearchPlan } from "@/lib/search-plan/types";
 
-type FlowPhase = "idle" | "loading" | "briefReady" | "error";
+type FlowPhase =
+  | "idle"
+  | "loading"
+  | "briefReady"
+  | "searchPlanLoading"
+  | "searchPlanReady"
+  | "error";
 
 export function ProspectingFlow() {
   const [url, setUrl] = useState("");
   const [brief, setBrief] = useState("");
+  const [searchPlan, setSearchPlan] = useState<SearchPlan | null>(null);
+  const [searchPlanWarnings, setSearchPlanWarnings] = useState<string[]>([]);
   const [phase, setPhase] = useState<FlowPhase>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -16,6 +27,8 @@ export function ProspectingFlow() {
     event.preventDefault();
     setErrorMessage(null);
     setBrief("");
+    setSearchPlan(null);
+    setSearchPlanWarnings([]);
     setPhase("loading");
 
     startTransition(async () => {
@@ -40,6 +53,45 @@ export function ProspectingFlow() {
       }
     });
   }
+
+  function handleContinue() {
+    if (!brief.trim()) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setSearchPlan(null);
+    setSearchPlanWarnings([]);
+    setPhase("searchPlanLoading");
+
+    startTransition(async () => {
+      try {
+        const result = await generateSearchPlan(brief, url);
+
+        if (!result.ok) {
+          setPhase("error");
+          setErrorMessage(result.message);
+          return;
+        }
+
+        setSearchPlan(result.plan);
+        setSearchPlanWarnings(result.warnings);
+        setPhase("searchPlanReady");
+      } catch (caught) {
+        setPhase("error");
+        setErrorMessage(
+          caught instanceof Error
+            ? caught.message
+            : "Something went wrong while generating the search plan.",
+        );
+      }
+    });
+  }
+
+  const isBriefPhase =
+    phase === "briefReady" ||
+    phase === "searchPlanLoading" ||
+    phase === "searchPlanReady";
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
@@ -98,13 +150,17 @@ export function ProspectingFlow() {
         </p>
       ) : null}
 
+      {isPending && phase === "searchPlanLoading" ? (
+        <p className="text-sm text-base-content/70">Generating search plan…</p>
+      ) : null}
+
       {errorMessage ? (
         <div role="alert" className="alert alert-error">
           <span>{errorMessage}</span>
         </div>
       ) : null}
 
-      {phase === "briefReady" ? (
+      {isBriefPhase ? (
         <div className="card bg-base-100 border border-base-300">
           <div className="card-body gap-4">
             <label className="form-control w-full">
@@ -118,11 +174,27 @@ export function ProspectingFlow() {
               />
             </label>
 
-            <button type="button" className="btn btn-primary w-full sm:w-auto">
-              Continue
+            <button
+              type="button"
+              className="btn btn-primary w-full sm:w-auto"
+              disabled={isPending || !brief.trim()}
+              onClick={handleContinue}
+            >
+              {isPending && phase === "searchPlanLoading" ? (
+                <>
+                  <span className="loading loading-spinner loading-sm" />
+                  Generating search plan…
+                </>
+              ) : (
+                "Continue"
+              )}
             </button>
           </div>
         </div>
+      ) : null}
+
+      {phase === "searchPlanReady" && searchPlan ? (
+        <SearchPlanPreview plan={searchPlan} warnings={searchPlanWarnings} />
       ) : null}
     </div>
   );
