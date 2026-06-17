@@ -1,5 +1,5 @@
-import { PageExtractTester } from "@/app/components/page-extract-tester";
+import { ProspectingFlow } from "@/app/components/prospecting-flow";
 
 export default function Home() {
-  return <PageExtractTester />;
+  return <ProspectingFlow />;
 }
