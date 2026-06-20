@@ -2,8 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { createProspectingBrief } from "@/app/actions/create-brief";
+import { executeSearchPlan } from "@/app/actions/execute-search-plan";
 import { generateSearchPlan } from "@/app/actions/generate-search-plan";
 import { SearchPlanPreview } from "@/app/components/search-plan-preview";
+import { SearchResultsPreview } from "@/app/components/search-results-preview";
+import type { SearchQueryResultGroup } from "@/lib/perplexity/types";
 import type { SearchPlan } from "@/lib/search-plan/types";
 
 type FlowPhase =
@@ -12,6 +15,8 @@ type FlowPhase =
   | "briefReady"
   | "searchPlanLoading"
   | "searchPlanReady"
+  | "searchExecutionLoading"
+  | "searchResultsReady"
   | "error";
 
 export function ProspectingFlow() {
@@ -19,9 +24,24 @@ export function ProspectingFlow() {
   const [brief, setBrief] = useState("");
   const [searchPlan, setSearchPlan] = useState<SearchPlan | null>(null);
   const [searchPlanWarnings, setSearchPlanWarnings] = useState<string[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchQueryResultGroup[] | null>(
+    null,
+  );
+  const [searchExecutionWarnings, setSearchExecutionWarnings] = useState<string[]>(
+    [],
+  );
+  const [searchExecutionError, setSearchExecutionError] = useState<string | null>(
+    null,
+  );
   const [phase, setPhase] = useState<FlowPhase>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  function clearSearchExecutionState() {
+    setSearchResults(null);
+    setSearchExecutionWarnings([]);
+    setSearchExecutionError(null);
+  }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -29,6 +49,7 @@ export function ProspectingFlow() {
     setBrief("");
     setSearchPlan(null);
     setSearchPlanWarnings([]);
+    clearSearchExecutionState();
     setPhase("loading");
 
     startTransition(async () => {
@@ -62,6 +83,7 @@ export function ProspectingFlow() {
     setErrorMessage(null);
     setSearchPlan(null);
     setSearchPlanWarnings([]);
+    clearSearchExecutionState();
     setPhase("searchPlanLoading");
 
     startTransition(async () => {
@@ -88,10 +110,60 @@ export function ProspectingFlow() {
     });
   }
 
+  function handleRunSearches() {
+    if (!searchPlan) {
+      return;
+    }
+
+    setSearchExecutionError(null);
+    setSearchResults(null);
+    setSearchExecutionWarnings([]);
+    setPhase("searchExecutionLoading");
+
+    startTransition(async () => {
+      try {
+        const result = await executeSearchPlan(searchPlan);
+
+        if (!result.ok) {
+          setSearchExecutionError(result.message);
+
+          if (result.groups.length > 0) {
+            setSearchResults(result.groups);
+            setSearchExecutionWarnings([]);
+            setPhase("searchResultsReady");
+            return;
+          }
+
+          setPhase("searchPlanReady");
+          return;
+        }
+
+        setSearchResults(result.groups);
+        setSearchExecutionWarnings(result.warnings);
+        setPhase("searchResultsReady");
+      } catch (caught) {
+        setSearchExecutionError(
+          caught instanceof Error
+            ? caught.message
+            : "Something went wrong while running Perplexity searches.",
+        );
+        setPhase("searchPlanReady");
+      }
+    });
+  }
+
   const isBriefPhase =
     phase === "briefReady" ||
     phase === "searchPlanLoading" ||
-    phase === "searchPlanReady";
+    phase === "searchPlanReady" ||
+    phase === "searchExecutionLoading" ||
+    phase === "searchResultsReady";
+
+  const isSearchPlanPhase =
+    searchPlan !== null &&
+    (phase === "searchPlanReady" ||
+      phase === "searchExecutionLoading" ||
+      phase === "searchResultsReady");
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-4 py-8 sm:px-6">
@@ -154,6 +226,10 @@ export function ProspectingFlow() {
         <p className="text-sm text-base-content/70">Generating search plan…</p>
       ) : null}
 
+      {isPending && phase === "searchExecutionLoading" ? (
+        <p className="text-sm text-base-content/70">Running Perplexity searches…</p>
+      ) : null}
+
       {errorMessage ? (
         <div role="alert" className="alert alert-error">
           <span>{errorMessage}</span>
@@ -193,8 +269,41 @@ export function ProspectingFlow() {
         </div>
       ) : null}
 
-      {phase === "searchPlanReady" && searchPlan ? (
-        <SearchPlanPreview plan={searchPlan} warnings={searchPlanWarnings} />
+      {isSearchPlanPhase && searchPlan ? (
+        <>
+          <SearchPlanPreview plan={searchPlan} warnings={searchPlanWarnings} />
+
+          <div className="flex flex-col gap-4">
+            <button
+              type="button"
+              className="btn btn-primary w-full sm:w-auto"
+              disabled={isPending}
+              onClick={handleRunSearches}
+            >
+              {isPending && phase === "searchExecutionLoading" ? (
+                <>
+                  <span className="loading loading-spinner loading-sm" />
+                  Running Perplexity searches…
+                </>
+              ) : (
+                "Run searches"
+              )}
+            </button>
+
+            {searchExecutionError ? (
+              <div role="alert" className="alert alert-error">
+                <span>{searchExecutionError}</span>
+              </div>
+            ) : null}
+          </div>
+        </>
+      ) : null}
+
+      {searchResults ? (
+        <SearchResultsPreview
+          groups={searchResults}
+          warnings={searchExecutionWarnings}
+        />
       ) : null}
     </div>
   );
