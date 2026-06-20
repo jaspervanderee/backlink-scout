@@ -16,6 +16,29 @@ export function extractHostname(url: string): string | null {
   }
 }
 
+export function normalizeSearchResultUrl(url: string): string | null {
+  const trimmed = url.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  try {
+    const parsed = new URL(
+      trimmed.includes("://") ? trimmed : `https://${trimmed}`,
+    );
+    parsed.hostname = parsed.hostname.replace(/^www\./i, "").toLowerCase();
+    parsed.hash = "";
+
+    if (parsed.pathname.length > 1 && parsed.pathname.endsWith("/")) {
+      parsed.pathname = parsed.pathname.slice(0, -1);
+    }
+
+    return parsed.href;
+  } catch {
+    return null;
+  }
+}
+
 export function queryContainsDomain(query: string, domain: string): boolean {
   const normalizedQuery = query.toLowerCase();
   const normalizedDomain = domain.replace(/^www\./i, "").toLowerCase();

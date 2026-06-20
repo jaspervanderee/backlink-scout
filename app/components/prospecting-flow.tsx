@@ -5,7 +5,10 @@ import { createProspectingBrief } from "@/app/actions/create-brief";
 import { executeSearchPlan } from "@/app/actions/execute-search-plan";
 import { generateSearchPlan } from "@/app/actions/generate-search-plan";
 import { SearchPlanPreview } from "@/app/components/search-plan-preview";
+import { CandidatePreparationPreview } from "@/app/components/candidate-preparation-preview";
 import { SearchResultsPreview } from "@/app/components/search-results-preview";
+import { prepareCandidates } from "@/lib/candidates/prepare-candidates";
+import type { PrepareCandidatesResult } from "@/lib/candidates/types";
 import type { SearchQueryResultGroup } from "@/lib/perplexity/types";
 import type { SearchPlan } from "@/lib/search-plan/types";
 
@@ -33,6 +36,8 @@ export function ProspectingFlow() {
   const [searchExecutionError, setSearchExecutionError] = useState<string | null>(
     null,
   );
+  const [candidatePreparation, setCandidatePreparation] =
+    useState<PrepareCandidatesResult | null>(null);
   const [phase, setPhase] = useState<FlowPhase>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -41,6 +46,12 @@ export function ProspectingFlow() {
     setSearchResults(null);
     setSearchExecutionWarnings([]);
     setSearchExecutionError(null);
+    setCandidatePreparation(null);
+  }
+
+  function applySearchResults(groups: SearchQueryResultGroup[]) {
+    setSearchResults(groups);
+    setCandidatePreparation(prepareCandidates(groups));
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -118,6 +129,7 @@ export function ProspectingFlow() {
     setSearchExecutionError(null);
     setSearchResults(null);
     setSearchExecutionWarnings([]);
+    setCandidatePreparation(null);
     setPhase("searchExecutionLoading");
 
     startTransition(async () => {
@@ -128,7 +140,7 @@ export function ProspectingFlow() {
           setSearchExecutionError(result.message);
 
           if (result.groups.length > 0) {
-            setSearchResults(result.groups);
+            applySearchResults(result.groups);
             setSearchExecutionWarnings([]);
             setPhase("searchResultsReady");
             return;
@@ -138,7 +150,7 @@ export function ProspectingFlow() {
           return;
         }
 
-        setSearchResults(result.groups);
+        applySearchResults(result.groups);
         setSearchExecutionWarnings(result.warnings);
         setPhase("searchResultsReady");
       } catch (caught) {
@@ -304,6 +316,10 @@ export function ProspectingFlow() {
           groups={searchResults}
           warnings={searchExecutionWarnings}
         />
+      ) : null}
+
+      {candidatePreparation ? (
+        <CandidatePreparationPreview result={candidatePreparation} />
       ) : null}
     </div>
   );
