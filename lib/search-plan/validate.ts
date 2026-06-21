@@ -8,15 +8,43 @@ const GENERIC_QUERY_PATTERNS = [
   /^tools$/i,
   /^links$/i,
 ];
-const SHOPPING_TOKENS = ["buy", "cheap", "for sale", "discount"];
-const VAGUE_PAGE_TYPES = ["page", "website", "site", "web page"];
-const EDITORIAL_CONTEXT_TOKENS = [
-  "gift guide",
-  "roundup",
-  "editorial",
-  "curated",
-  "feature",
+const BUYER_INTENT_TOKENS = [
+  "buy",
+  "shop",
+  "price",
+  "cheap",
+  "for sale",
+  "order",
+  "discount",
 ];
+const PRODUCT_NOUNS = [
+  "poster",
+  "print",
+  "wall art",
+  "decor",
+  "gift",
+  "merch",
+  "template",
+  "app",
+  "tool",
+  "course",
+];
+const EDITORIAL_FORMATS = [
+  "feature",
+  "showcase",
+  "roundup",
+  "guide",
+  "case study",
+  "review",
+  "directory",
+  "examples",
+  "inspiration",
+  "interview",
+  "curated list",
+];
+const VAGUE_PAGE_TYPES = ["page", "website", "site", "web page"];
+const MAX_DUPLICATE_WARNINGS = 3;
+const DUPLICATE_JACCARD_THRESHOLD = 0.6;
 
 export type ValidateLlmSearchPlanResult =
   | { ok: true; plan: LlmSearchPlan; warnings: string[] }
@@ -44,15 +72,55 @@ function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
-function collectQueryWarnings(
-  query: LlmSearchQuery,
-  index: number,
-  brief: string,
-): string[] {
+function containsToken(haystack: string, tokens: string[]): boolean {
+  const lower = haystack.toLowerCase();
+  return tokens.some((token) => lower.includes(token));
+}
+
+function normalizeWords(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .replace(/[^\w\s]/g, " ")
+      .split(/\s+/)
+      .filter((word) => word.length > 2),
+  );
+}
+
+function jaccardSimilarity(a: Set<string>, b: Set<string>): number {
+  if (a.size === 0 && b.size === 0) {
+    return 1;
+  }
+
+  let intersection = 0;
+  for (const word of a) {
+    if (b.has(word)) {
+      intersection += 1;
+    }
+  }
+
+  const union = new Set([...a, ...b]).size;
+  return union === 0 ? 0 : intersection / union;
+}
+
+function sharedWordCount(a: Set<string>, b: Set<string>): number {
+  let count = 0;
+  for (const word of a) {
+    if (b.has(word)) {
+      count += 1;
+    }
+  }
+  return count;
+}
+
+function collectQueryWarnings(query: LlmSearchQuery, index: number, brief: string): string[] {
   const warnings: string[] = [];
   const label = `Query ${index + 1}`;
 
-  if (wordCount(query.queryText) < 4 || GENERIC_QUERY_PATTERNS.some((pattern) => pattern.test(query.queryText.trim()))) {
+  if (
+    wordCount(query.queryText) < 4 ||
+    GENERIC_QUERY_PATTERNS.some((pattern) => pattern.test(query.queryText.trim()))
+  ) {
     warnings.push(`${label}: query looks very short or vague.`);
   }
 
@@ -60,22 +128,19 @@ function collectQueryWarnings(
     warnings.push(`${label}: rationale is thin.`);
   }
 
-  const lowerRationale = query.rationale.toLowerCase();
-  const hasShoppingIntent = SHOPPING_TOKENS.some((token) =>
-    query.queryText.toLowerCase().includes(token),
-  );
-  const hasEditorialContext = EDITORIAL_CONTEXT_TOKENS.some((token) =>
-    lowerRationale.includes(token),
-  );
-  if (hasShoppingIntent && !hasEditorialContext) {
+  const hasBuyerLanguage =
+    containsToken(query.queryText, BUYER_INTENT_TOKENS) ||
+    containsToken(query.queryText, PRODUCT_NOUNS);
+  if (
+    hasBuyerLanguage &&
+    !EDITORIAL_FORMATS.some((format) => query.queryText.toLowerCase().includes(format))
+  ) {
     warnings.push(
-      `${label}: query has shopping intent without clear editorial rationale.`,
+      `${label}: likely buyer-intent — product or shopping language without an editorial page format.`,
     );
   }
 
-  if (
-    VAGUE_PAGE_TYPES.includes(query.expectedPageType.trim().toLowerCase())
-  ) {
+  if (VAGUE_PAGE_TYPES.includes(query.expectedPageType.trim().toLowerCase())) {
     warnings.push(`${label}: expected page type is vague.`);
   }
 
@@ -88,6 +153,32 @@ function collectQueryWarnings(
         warnings.push(
           `${label}: query may reference an invented brand or publication ("${phrase}").`,
         );
+      }
+    }
+  }
+
+  return warnings;
+}
+
+function collectDuplicateWarnings(queries: LlmSearchQuery[]): string[] {
+  const warnings: string[] = [];
+
+  for (let i = 0; i < queries.length; i += 1) {
+    for (let j = i + 1; j < queries.length; j += 1) {
+      const wordsA = normalizeWords(queries[i].queryText);
+      const wordsB = normalizeWords(queries[j].queryText);
+      const similar =
+        jaccardSimilarity(wordsA, wordsB) >= DUPLICATE_JACCARD_THRESHOLD ||
+        (queries[i].hypothesisUsed === queries[j].hypothesisUsed &&
+          sharedWordCount(wordsA, wordsB) >= 3);
+
+      if (similar) {
+        warnings.push(
+          `Queries ${i + 1} and ${j + 1} look like near-duplicates and may return the same SERPs.`,
+        );
+        if (warnings.length >= MAX_DUPLICATE_WARNINGS) {
+          return warnings;
+        }
       }
     }
   }
@@ -234,9 +325,12 @@ export function validateLlmSearchPlan(
   plan.metadata.searchCountryRegion =
     plan.metadata.searchCountryRegion ?? null;
 
-  const warnings = plan.queries.flatMap((query, index) =>
-    collectQueryWarnings(query, index, brief),
-  );
+  const warnings = [
+    ...plan.queries.flatMap((query, index) =>
+      collectQueryWarnings(query, index, brief),
+    ),
+    ...collectDuplicateWarnings(plan.queries),
+  ];
 
   return { ok: true, plan, warnings };
 }
