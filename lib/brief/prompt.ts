@@ -2,6 +2,15 @@ import type { FetchAndExtractResult } from "@/lib/fetch-and-extract";
 
 const MAX_CONTENT_CHARS = 12_000;
 
+export const BRIEF_SECTION_HEADINGS = [
+  "1. Project identity",
+  "2. Product context",
+  "3. Audience and uses",
+  "4. Link strategy",
+  "5. Discovery signals",
+  "6. Constraints, risks, and grounding",
+] as const;
+
 export const BRIEF_SYSTEM_PROMPT = `You write prospecting briefs for backlink and mention discovery.
 
 Your job is to understand a project from extracted website content and write a structured plain-text brief that another system can later use to find legitimate editorial outreach opportunities.
@@ -10,29 +19,16 @@ Rules:
 - Use the extracted website content and metadata as your source.
 - Separate facts from inference. Label inferred assumptions clearly (e.g. "Inferred:").
 - Do not invent specifics like competitors, locations, or audiences unless labeled as inferred.
-- Do not name specific publications, podcasts, newsletters, directories, or websites as prospecting targets unless they appear in the extracted page content. Prefer target categories (e.g. "design blogs", "indie SaaS newsletters") over named examples.
+- Do not name specific publications, podcasts, newsletters, directories, or websites as prospecting targets unless they appear in the extracted page content. Prefer target categories over named examples.
 - Do not use status claims such as limited edition, official, partnered, featured, or endorsed unless those exact claims are clearly present in the extracted content.
-- If the page is commercial or product-led (selling a product, SaaS signup, paid service, etc.), flag this clearly and explain how it affects outreach opportunities (e.g. harder to earn editorial features, better fit for tool directories or review roundups).
+- If the page is commercial or product-led, flag this once in section 2 with a single sentence on how it affects outreach. Do not repeat the commercial flag elsewhere.
+- Do not list generic exclusions (jobs, courses, agencies, spam directories, marketplaces, login pages, own domain). Those are handled elsewhere. In section 6, include only project-specific risks and avoid-notes that would change search or outreach strategy.
+- Say each important fact once in the most appropriate section. Do not restate embed strategy, key counts, or link hooks in multiple sections.
 - Do not generate search queries.
 - Do not optimize for paid links, link exchanges, or spammy backlink tactics.
 - Focus on legitimate editorial discovery and outreach opportunities.
 - Write in plain language. Use section headings exactly as listed below.
 - Return only the brief text. No preamble, no JSON, no markdown code fences.`;
-
-export const BRIEF_SECTION_HEADINGS = [
-  "1. Project identity",
-  "2. What it is",
-  "3. Category and adjacent categories",
-  "4. Audience",
-  "5. Main use cases",
-  "6. Linkable reason",
-  "7. Linkable assets",
-  "8. Prospecting targets",
-  "9. Search vocabulary",
-  "10. Exclusions",
-  "11. Constraints",
-  "12. Confidence",
-] as const;
 
 function truncateContent(text: string): string {
   if (text.length <= MAX_CONTENT_CHARS) {
@@ -89,7 +85,7 @@ export function buildBriefUserPrompt(extraction: FetchAndExtractResult): string 
     "\n",
   );
 
-  return `Write a full prospecting brief for this project.
+  return `Write a prospecting brief for this project.
 
 Website URL: ${extraction.finalUrl ?? extraction.requestedUrl}
 Requested URL: ${extraction.requestedUrl}
@@ -105,17 +101,11 @@ Include all of these sections with the exact headings:
 
 ${sections}
 
-Section guidance:
+Section guidance (keep each section concise; avoid repeating facts across sections):
 - Project identity: project name, website URL, one-sentence description.
-- What it is: describe the product, creator, project, site, tool, app, newsletter, portfolio, community, or resource. Note if the page is commercial or product-led.
-- Category and adjacent categories: main category plus related categories people may describe differently.
-- Audience: who this is for, including adjacent audiences; mark uncertain assumptions clearly.
-- Main use cases: what people use it for or why they would care.
-- Linkable reason: why another site would naturally mention or link to it. Do not claim prior features, partnerships, or endorsements unless stated on the page.
-- Linkable assets: free tools, guides, templates, data, examples, galleries, articles, calculators, communities, etc.
-- Prospecting targets: kinds of pages to find (resource pages, directories, roundups, newsletters, podcasts, communities, review sites, alternatives pages, niche blogs, etc.). Use categories only — do not name specific publications or sites unless they appear in the extracted content.
-- Search vocabulary: terms from the site, outsider terms, synonyms, niche terms, audience terms, problem/use-case terms.
-- Exclusions: noisy result types to avoid (jobs, courses, agencies, spam directories, marketplaces, login pages, the project's own domain, etc.).
-- Constraints: language, geography, freshness if known, whether to exclude the project's own domain. If commercial/product-led, note how that should shape outreach (e.g. prioritize tool lists and comparisons over pure editorial features).
-- Confidence: what was clearly found on the website, what was inferred, what is missing or uncertain. State whether the page appears commercial/product-led and how confident you are.`;
+- Product context: what the product/project/site is; main and adjacent categories; whether the page is commercial or product-led and one sentence on outreach implication.
+- Audience and uses: who it is for (label inferences) and primary use cases in one combined section.
+- Link strategy: why another site would link and what concrete assets support it (embeds, guides, data, tools, galleries, etc.). Do not claim prior features, partnerships, or endorsements unless stated on the page.
+- Discovery signals: target page categories to find (not named sites unless on the page) plus search vocabulary as short bullet lists (max ~5 terms each: site terms, outsider terms, niche terms, audience terms, use-case terms).
+- Constraints, risks, and grounding: language and geography; freshness or timeliness if relevant; commercial or IP/licensing risks if relevant; project-specific avoid-notes for search/outreach (e.g. unlikely major news coverage, franchise fan-art context, paid-only directories); what was clearly found vs inferred vs missing. Do not repeat facts already stated above.`;
 }

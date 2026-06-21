@@ -2,6 +2,9 @@ import type { FetchAndExtractResult } from "@/lib/fetch-and-extract";
 import { getLlmClient } from "@/lib/llm";
 import { BRIEF_SYSTEM_PROMPT, buildBriefUserPrompt } from "./prompt";
 import type { GenerateBriefResult } from "./types";
+import { validateBriefSections } from "./validate-sections";
+
+const BRIEF_MAX_TOKENS = 3000;
 
 function hasUsableExtractionContent(extraction: FetchAndExtractResult): boolean {
   if (extraction.metadata) {
@@ -31,10 +34,15 @@ async function callBriefLlm(
       { role: "system", content: BRIEF_SYSTEM_PROMPT },
       { role: "user", content: buildBriefUserPrompt(extraction) },
     ],
-    { temperature: 0.3, maxTokens: 4096 },
+    { temperature: 0.3, maxTokens: BRIEF_MAX_TOKENS },
   );
 
   return result.content.trim();
+}
+
+function buildBriefSuccess(brief: string): GenerateBriefResult {
+  const warnings = validateBriefSections(brief);
+  return warnings.length > 0 ? { ok: true, brief, warnings } : { ok: true, brief };
 }
 
 export async function generateProspectingBrief(
@@ -65,7 +73,7 @@ export async function generateProspectingBrief(
       };
     }
 
-    return { ok: true, brief };
+    return buildBriefSuccess(brief);
   } catch (error) {
     if (error instanceof Error && error.message === "config_missing") {
       return {
@@ -78,7 +86,7 @@ export async function generateProspectingBrief(
     try {
       const brief = await callBriefLlm(extraction);
       if (brief) {
-        return { ok: true, brief };
+        return buildBriefSuccess(brief);
       }
     } catch {
       // Fall through to error response below.
