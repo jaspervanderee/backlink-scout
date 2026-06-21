@@ -9,6 +9,8 @@ export type LlmCompletionOptions = {
   temperature?: number;
   maxTokens?: number;
   jsonMode?: boolean;
+  /** Request timeout in milliseconds. When omitted, no timeout is applied. */
+  timeoutMs?: number;
 };
 
 export type LlmCompletionResult = {

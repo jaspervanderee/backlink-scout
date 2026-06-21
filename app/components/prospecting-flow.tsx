@@ -6,9 +6,12 @@ import { executeSearchPlan } from "@/app/actions/execute-search-plan";
 import { generateSearchPlan } from "@/app/actions/generate-search-plan";
 import { SearchPlanPreview } from "@/app/components/search-plan-preview";
 import { CandidatePreparationPreview } from "@/app/components/candidate-preparation-preview";
+import { DomainInvestigationPreview } from "@/app/components/domain-investigation-preview";
+import { runDomainInvestigationBatch } from "@/app/components/run-domain-investigation-batch";
 import { SearchResultsPreview } from "@/app/components/search-results-preview";
 import { prepareCandidates } from "@/lib/candidates/prepare-candidates";
 import type { PrepareCandidatesResult } from "@/lib/candidates/types";
+import type { DomainInvestigationProgress } from "@/lib/domain-investigation/types";
 import type { SearchQueryResultGroup } from "@/lib/perplexity/types";
 import type { SearchPlan } from "@/lib/search-plan/types";
 
@@ -20,6 +23,7 @@ type FlowPhase =
   | "searchPlanReady"
   | "searchExecutionLoading"
   | "searchResultsReady"
+  | "domainInvestigationLoading"
   | "error";
 
 export function ProspectingFlow() {
@@ -38,6 +42,8 @@ export function ProspectingFlow() {
   );
   const [candidatePreparation, setCandidatePreparation] =
     useState<PrepareCandidatesResult | null>(null);
+  const [domainInvestigation, setDomainInvestigation] =
+    useState<DomainInvestigationProgress | null>(null);
   const [phase, setPhase] = useState<FlowPhase>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -47,6 +53,7 @@ export function ProspectingFlow() {
     setSearchExecutionWarnings([]);
     setSearchExecutionError(null);
     setCandidatePreparation(null);
+    setDomainInvestigation(null);
   }
 
   function applySearchResults(groups: SearchQueryResultGroup[]) {
@@ -164,6 +171,57 @@ export function ProspectingFlow() {
     });
   }
 
+  function handleInvestigateDomains() {
+    if (
+      !brief.trim() ||
+      !searchPlan ||
+      !searchResults ||
+      !candidatePreparation ||
+      candidatePreparation.kept.length === 0
+    ) {
+      return;
+    }
+
+    setDomainInvestigation({
+      total: candidatePreparation.kept.length,
+      completed: 0,
+      inProgress: [],
+      results: [],
+      warnings: [],
+      isRunning: true,
+      error: null,
+    });
+    setPhase("domainInvestigationLoading");
+
+    void runDomainInvestigationBatch({
+      brief,
+      candidates: candidatePreparation.kept,
+      searchPlan,
+      searchResults,
+      onProgress: (progress) => {
+        setDomainInvestigation(progress);
+      },
+    })
+      .then(() => {
+        setPhase("searchResultsReady");
+      })
+      .catch((caught) => {
+        setDomainInvestigation((current) => ({
+          total: current?.total ?? candidatePreparation.kept.length,
+          completed: current?.completed ?? 0,
+          inProgress: [],
+          results: current?.results ?? [],
+          warnings: current?.warnings ?? [],
+          isRunning: false,
+          error:
+            caught instanceof Error
+              ? caught.message
+              : "Something went wrong while investigating domains.",
+        }));
+        setPhase("searchResultsReady");
+      });
+  }
+
   const isBriefPhase =
     phase === "briefReady" ||
     phase === "searchPlanLoading" ||
@@ -240,6 +298,18 @@ export function ProspectingFlow() {
 
       {isPending && phase === "searchExecutionLoading" ? (
         <p className="text-sm text-base-content/70">Running Perplexity searches…</p>
+      ) : null}
+
+
+      {domainInvestigation?.isRunning ? (
+        <p className="text-sm text-base-content/70">
+          Investigating domains — {domainInvestigation.completed} of{" "}
+          {domainInvestigation.total} complete
+          {domainInvestigation.inProgress.length > 0
+            ? ` (${ domainInvestigation.inProgress.join(", ") })`
+            : ""}
+          …
+        </p>
       ) : null}
 
       {errorMessage ? (
@@ -319,7 +389,35 @@ export function ProspectingFlow() {
       ) : null}
 
       {candidatePreparation ? (
-        <CandidatePreparationPreview result={candidatePreparation} />
+        <>
+          <CandidatePreparationPreview result={candidatePreparation} />
+
+          <div className="flex flex-col gap-4">
+            <button
+              type="button"
+              className="btn btn-primary w-full sm:w-auto"
+              disabled={
+                (domainInvestigation?.isRunning ?? false) ||
+                candidatePreparation.kept.length === 0 ||
+                !searchPlan
+              }
+              onClick={handleInvestigateDomains}
+            >
+              {domainInvestigation?.isRunning ? (
+                <>
+                  <span className="loading loading-spinner loading-sm" />
+                  Investigating kept domains…
+                </>
+              ) : (
+                "Investigate kept domains"
+              )}
+            </button>
+          </div>
+        </>
+      ) : null}
+
+      {domainInvestigation ? (
+        <DomainInvestigationPreview progress={domainInvestigation} />
       ) : null}
     </div>
   );

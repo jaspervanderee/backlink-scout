@@ -88,6 +88,9 @@ export function prepareCandidates(
         url: page.url,
         normalizedUrl: normalizeSearchResultUrl(page.url),
         title: page.title,
+        snippet: page.snippet,
+        date: page.date,
+        lastUpdated: page.lastUpdated,
       };
 
       const domain =

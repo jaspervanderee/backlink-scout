@@ -5,6 +5,9 @@ export type SourceHit = {
   url: string;
   normalizedUrl: string | null;
   title: string;
+  snippet: string;
+  date: string | null;
+  lastUpdated: string | null;
 };
 
 export type DomainCandidateBase = {
