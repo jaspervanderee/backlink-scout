@@ -95,7 +95,6 @@ export type DomainDecision = {
   fitRationale: string;
   incentivesOrConflicts: string;
   riskNotes: string;
-  suggestedOutreachAngle: string;
   confidence: DomainConfidence;
   evidenceGaps: string;
   toolTraceSummary: string;

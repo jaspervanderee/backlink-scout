@@ -48,8 +48,6 @@ export const DOMAIN_DECISION_JSON_EXAMPLE = JSON.stringify(
     incentivesOrConflicts:
       "Note paid placements, self-promotion, marketplace behavior, or conflicts.",
     riskNotes: "Note spam, weak editorial standards, or uncertain backlink path.",
-    suggestedOutreachAngle:
-      "Suggest a concrete outreach angle if decision is promising or maybe.",
     confidence: "medium",
     evidenceGaps: "What evidence is still missing or weak.",
     toolTraceSummary:

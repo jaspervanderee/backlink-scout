@@ -209,7 +209,6 @@ export function validateDomainDecision(
     "fitRationale",
     "incentivesOrConflicts",
     "riskNotes",
-    "suggestedOutreachAngle",
     "evidenceGaps",
     "toolTraceSummary",
   ] as const;
@@ -267,7 +266,6 @@ export function validateDomainDecision(
       fitRationale: (record.fitRationale as string).trim(),
       incentivesOrConflicts: (record.incentivesOrConflicts as string).trim(),
       riskNotes: (record.riskNotes as string).trim(),
-      suggestedOutreachAngle: (record.suggestedOutreachAngle as string).trim(),
       confidence,
       evidenceGaps: (record.evidenceGaps as string).trim(),
       toolTraceSummary: (record.toolTraceSummary as string).trim(),

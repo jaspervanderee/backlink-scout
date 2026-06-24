@@ -164,11 +164,6 @@ function DomainResultCard({
           </div>
 
           <div>
-            <p className="font-medium">Suggested outreach angle</p>
-            <p>{decision.suggestedOutreachAngle}</p>
-          </div>
-
-          <div>
             <p className="font-medium">Evidence gaps</p>
             <p>{decision.evidenceGaps}</p>
           </div>
