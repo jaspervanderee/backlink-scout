@@ -8,7 +8,7 @@ const GENERIC_QUERY_PATTERNS = [
   /^tools$/i,
   /^links$/i,
 ];
-const BUYER_INTENT_TOKENS = [
+const SHOPPING_TOKENS = [
   "buy",
   "shop",
   "price",
@@ -17,31 +17,31 @@ const BUYER_INTENT_TOKENS = [
   "order",
   "discount",
 ];
-const PRODUCT_NOUNS = [
-  "poster",
-  "print",
-  "wall art",
-  "decor",
-  "gift",
-  "merch",
-  "template",
-  "app",
-  "tool",
-  "course",
-];
-const EDITORIAL_FORMATS = [
+const STRONG_EDITORIAL_SIGNALS = [
+  "blog",
+  "magazine",
+  "newsletter",
+  "publication",
+  "journal",
+  "editorial",
   "feature",
-  "showcase",
   "roundup",
-  "guide",
-  "case study",
-  "review",
-  "directory",
-  "examples",
-  "inspiration",
-  "interview",
+  "gift guide",
   "curated list",
+  "interview",
+  "case study",
 ];
+const CONDITIONAL_OPPORTUNITY_SIGNALS = [
+  "resources",
+  "resource list",
+  "tools list",
+  "directory",
+  "review",
+  "guide",
+  "examples",
+];
+const WEAK_EDITORIAL_SIGNALS = ["inspiration", "showcase", "ideas"];
+const MIN_WORDS_FOR_CONDITIONAL_SIGNAL = 5;
 const VAGUE_PAGE_TYPES = ["page", "website", "site", "web page"];
 const MAX_DUPLICATE_WARNINGS = 3;
 const DUPLICATE_JACCARD_THRESHOLD = 0.6;
@@ -49,6 +49,13 @@ const DUPLICATE_JACCARD_THRESHOLD = 0.6;
 export type ValidateLlmSearchPlanResult =
   | { ok: true; plan: LlmSearchPlan; warnings: string[] }
   | { ok: false; errors: string[] };
+
+export type PublisherIntentCheck = {
+  hasStrongSignal: boolean;
+  hasConditionalSignal: boolean;
+  hasWeakSignal: boolean;
+  passes: boolean;
+};
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
@@ -75,6 +82,51 @@ function wordCount(text: string): number {
 function containsToken(haystack: string, tokens: string[]): boolean {
   const lower = haystack.toLowerCase();
   return tokens.some((token) => lower.includes(token));
+}
+
+export function checkPublisherIntent(queryText: string): PublisherIntentCheck {
+  const hasStrongSignal = containsToken(queryText, STRONG_EDITORIAL_SIGNALS);
+  const hasConditionalSignal = containsToken(
+    queryText,
+    CONDITIONAL_OPPORTUNITY_SIGNALS,
+  );
+  const hasWeakSignal = containsToken(queryText, WEAK_EDITORIAL_SIGNALS);
+  const passes =
+    hasStrongSignal ||
+    (hasConditionalSignal &&
+      wordCount(queryText) >= MIN_WORDS_FOR_CONDITIONAL_SIGNAL);
+
+  return {
+    hasStrongSignal,
+    hasConditionalSignal,
+    hasWeakSignal,
+    passes,
+  };
+}
+
+export function collectPublisherIntentErrors(
+  queryText: string,
+  label: string,
+): string[] {
+  const errors: string[] = [];
+  const intent = checkPublisherIntent(queryText);
+
+  if (!intent.passes) {
+    errors.push(
+      `${label}: queryText lacks publisher/editorial intent — include a strong signal (blog, newsletter, roundup, gift guide, feature, etc.) or a conditional signal (directory, resources, guide) with enough context.`,
+    );
+  }
+
+  if (
+    containsToken(queryText, SHOPPING_TOKENS) &&
+    !intent.hasStrongSignal
+  ) {
+    errors.push(
+      `${label}: shopping language requires a strong publisher signal (blog, newsletter, roundup, gift guide, feature, etc.).`,
+    );
+  }
+
+  return errors;
 }
 
 function normalizeWords(text: string): Set<string> {
@@ -116,6 +168,7 @@ function sharedWordCount(a: Set<string>, b: Set<string>): number {
 function collectQueryWarnings(query: LlmSearchQuery, index: number, brief: string): string[] {
   const warnings: string[] = [];
   const label = `Query ${index + 1}`;
+  const intent = checkPublisherIntent(query.queryText);
 
   if (
     wordCount(query.queryText) < 4 ||
@@ -128,15 +181,15 @@ function collectQueryWarnings(query: LlmSearchQuery, index: number, brief: strin
     warnings.push(`${label}: rationale is thin.`);
   }
 
-  const hasBuyerLanguage =
-    containsToken(query.queryText, BUYER_INTENT_TOKENS) ||
-    containsToken(query.queryText, PRODUCT_NOUNS);
-  if (
-    hasBuyerLanguage &&
-    !EDITORIAL_FORMATS.some((format) => query.queryText.toLowerCase().includes(format))
-  ) {
+  if (intent.hasConditionalSignal && !intent.hasStrongSignal) {
     warnings.push(
-      `${label}: likely buyer-intent — product or shopping language without an editorial page format.`,
+      `${label}: weak publisher intent — conditional signal only; add blog, newsletter, magazine, or similar.`,
+    );
+  }
+
+  if (intent.hasWeakSignal && !intent.hasStrongSignal) {
+    warnings.push(
+      `${label}: weak editorial token (inspiration, showcase, or ideas) without a strong publisher signal.`,
     );
   }
 
@@ -240,6 +293,10 @@ function validateQuery(
     queryContainsDomain(query.queryText, projectDomain)
   ) {
     errors.push(`${label}: queryText must not contain the project domain.`);
+  }
+
+  if (isNonEmptyString(query.queryText)) {
+    errors.push(...collectPublisherIntentErrors(query.queryText, label));
   }
 
   return errors;

@@ -173,7 +173,7 @@ Initial examples from the World Cup poster evaluation:
 | Graphis             | Skip               | Paid awards and own publications do not satisfy free earned outreach             |
 
 
-Run the full pipeline against this benchmark after changes. Test actual outputs, not only prompt wording or architectural intent.
+Run the full pipeline against this benchmark after changes. Test actual outputs, not only prompt wording or architectural intent. Search plans are validated for publisher/editorial intent in each `queryText` (tiered strong/conditional signals) before Perplexity runs.
 
 ## Out of Scope
 

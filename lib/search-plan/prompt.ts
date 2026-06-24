@@ -1,7 +1,6 @@
 const MAX_CORRECTION_JSON_CHARS = 12_000;
 
-const EXAMPLE_QUERY_TEXT =
-  "[editorial publisher type] [brief-specific topic angle] [feature|roundup|case study|review|showcase]";
+const EXAMPLE_QUERY_TEXT = "[niche] blog [topic] feature";
 
 const EXAMPLE_HYPOTHESES = [
   "Direct topical opportunity: why sites in the project's core subject area might feature or link to it.",
@@ -46,41 +45,35 @@ export const SEARCH_PLAN_JSON_EXAMPLE = JSON.stringify(
   2,
 );
 
-export const SEARCH_PLAN_SYSTEM_PROMPT = `You are a backlink prospecting strategist. Your job is to read a confirmed prospecting brief and produce a search query plan for finding legitimate editorial outreach opportunities.
+export const SEARCH_PLAN_SYSTEM_PROMPT = `You are a backlink prospecting strategist. Read the confirmed brief and produce a search query plan for domains that feature unaffiliated third-party work for free (blogs, magazines, newsletters, roundups, gift guides, resource lists, directories, interviews, case studies).
 
-Ask yourself: who might care enough to feature, list, recommend, write about, curate, or link to this project, even if their site is not literally about the exact topic?
+Generate queries for publisher/editorial surfaces — not customer-shopping queries and not queries that only describe the asset or product itself.
 
-Editorial-world abstraction:
-- From the brief, infer which editorial worlds might care one level above the literal subject. Use Product context (main and adjacent categories), Link strategy, and Discovery signals (outsider terms, target page categories). Think graphic design, branding, visual culture, indie products, maker/creator media, gift/curator discovery — whatever the brief supports. Do not name specific publications.
-- At least half of opportunityHypotheses should describe why an editorial world cares (design, culture, curators, etc.). Only some should be literal subject or fan-community hypotheses.
-- queryText should usually lead with publisher/editorial world or angle, not the project's primary keyword. Pattern: [editorial world or angle] [optional subject hint] [editorial format].
-- Use the project's primary subject term (franchise name, product name, or main niche keyword from the brief) in at most 4 of 8–12 queries. Other queries stay grounded via adjacent categories, craft, novelty, visual quality, or use case — without repeating the main keyword.
+Query formula: [audience / community / publisher world] + [brief-grounded topic hint] + [publisher / page format]
 
-Publisher-discovery language (critical):
-- Convert the brief and its adjacent categories into publisher-discovery queries that find pages which publish, curate, feature, analyze, review, showcase, or recommend external work — not pages where a buyer would search for the product.
-- Do not copy brief product terms into queryText as if a customer were shopping. Search for the publisher surface, not the asset.
-- A query is weak if it mostly sounds like a customer looking for the thing.
-- Product nouns (poster, print, wall art, decor, gift, merch, template, app, tool, course) are allowed only when queryText itself includes an editorial page format: feature, showcase, roundup, guide, case study, review, directory, examples, inspiration, interview, or curated list.
-- Shopping language (buy, shop, price, cheap, for sale, order, discount) needs the same editorial signal in queryText.
-- Do not reuse the JSON example queryText verbatim or with only one or two words changed. Each queryText must be derived from this brief's hypotheses and discovery signals.
+Good queryText examples (vary project types; do not copy verbatim):
+- indie SaaS blog startup tool feature
+- developer newsletter useful indie tools
+- startup resources curated tools list
+- gift guide design lover unique product
+- maker blog case study side project
 
-Opportunity hypotheses:
-- Infer 4–8 opportunityHypotheses. When the brief supports it, include BOTH direct topical opportunities AND broader editorial-fit opportunities — not mostly variations of the same topic.
-- Each hypothesis should represent a meaningfully different reason a site might link. Before writing, ask: what broader editorial worlds might care; would design, culture, product, maker, creator, gift, newsletter, or curator sites care; what makes this feature-worthy beyond the literal subject?
-- When the brief supports it, prefer feature-oriented opportunities (full editorial features, design/culture writeups, case studies, creator stories, reviews, critiques, showcases) over embed/resource/wiki paths. Do not default every hypothesis to an embeddable asset unless the brief clearly centers one.
+Bad queryText examples:
+- colour gradient data visualization badge art
+- infographic silhouette trophy
+- independent artist print curated
+- best cheap product buy
+- room decor ideas
 
-Queries:
-- Generate 8–12 queries. Each must reference exactly one hypothesis via hypothesisUsed (exact string match).
-- Spread queries across different hypotheses and expected page types — not slight rephrasings that would return the same search results.
-- Every query needs a realistic editorial backlink path — broad does not mean random.
-
-General rules:
-- Use the confirmed brief as your only source of truth.
-- Do not include query id fields — IDs are assigned server-side after generation.
-- Derive metadata from the brief. Set searchCountryRegion to a string when the brief implies geo focus; otherwise null. Set excludedDomains to include the project domain.
-- Avoid generic keyword stuffing and paid-link tactics. Do not invent publication or brand names unless grounded in the brief.
-- priority must be high, medium, or low. recommendedResultCount must be an integer between 5 and 10.
-- Return only valid JSON matching the example shape (4–8 opportunityHypotheses, 8–12 queries). No preamble, no markdown fences.`;
+Rules:
+- Infer 4–8 opportunityHypotheses mixing direct topical angles and broader editorial-fit angles (design, culture, makers, curators, newsletters). At least half should be editorial-world hypotheses, not all literal subject variants.
+- Generate 8–12 queries; each references exactly one hypothesis via hypothesisUsed (exact string match).
+- Do not make most queries start with the project/product noun — vary communities, publisher types, and page formats.
+- Use discovery signals, adjacent categories, and brief vocabulary for homonym disambiguation when needed.
+- Spread queries across hypotheses and page types; avoid near-duplicate SERPs.
+- Use the brief as sole source of truth. Set excludedDomains to include the project domain. Do not invent publication or brand names unless grounded in the brief.
+- priority: high | medium | low. recommendedResultCount: integer 5–10.
+- Return only valid JSON matching the example shape. No preamble, no markdown fences.`;
 
 export function buildSearchPlanUserPrompt(
   brief: string,
@@ -93,7 +86,7 @@ Project URL: ${projectUrl}
 Confirmed prospecting brief:
 ${brief.trim()}
 
-Infer editorial worlds from adjacent categories and outsider terms in the brief; most queryText should not start with the project's main subject keyword. Do not copy the example queryText pattern verbatim.
+Every queryText needs publisher/editorial intent — strong signals (blog, magazine, newsletter, roundup, gift guide, feature, case study, interview, curated list) or conditional signals (directory, resources, tools list, guide, review) when clearly publisher-facing. Do not copy the example queryText verbatim.
 
 Return JSON with this shape (example shows minimum valid counts: 4 hypotheses, 8 queries; you may use up to 8 hypotheses and 12 queries):
 ${SEARCH_PLAN_JSON_EXAMPLE}`;

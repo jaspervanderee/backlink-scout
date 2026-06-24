@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "npx tsx --test lib/search-plan/validate.test.ts"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",
