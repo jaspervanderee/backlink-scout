@@ -12,6 +12,7 @@ const BLOCKED_BRANDS: BlockedBrandEntry[] = [
   { domains: ["express.adobe.com"], reason: "blocked_template" },
   { domains: ["stock.adobe.com"], reason: "blocked_template" },
   { domains: ["create.adobe.com"], reason: "blocked_template" },
+  { domains: ["adobe.com"], reason: "blocked_template" },
 
   // Platforms
   { domains: ["instagram.com"], reason: "blocked_platform" },
@@ -19,7 +20,7 @@ const BLOCKED_BRANDS: BlockedBrandEntry[] = [
   { domains: ["youtube.com"], reason: "blocked_platform" },
   { domains: ["tiktok.com"], reason: "blocked_platform" },
   { domains: ["pinterest.com"], reason: "blocked_platform" },
-  { domains: ["behance.com"], reason: "blocked_platform" },
+  { domains: ["behance.com", "behance.net"], reason: "blocked_platform" },
   { domains: ["linkedin.com"], reason: "blocked_platform" },
   { domains: ["twitter.com"], reason: "blocked_platform" },
   { domains: ["x.com"], reason: "blocked_platform" },
