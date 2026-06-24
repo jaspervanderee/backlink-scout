@@ -1,5 +1,29 @@
 import type { CandidateRemovalReason } from "./types";
 
+/** Top slot-wasters for Perplexity search_domain_filter (API max 20). */
+export const PERPLEXITY_DOMAIN_DENYLIST = [
+  "-pinterest.com",
+  "-behance.net",
+  "-dribbble.com",
+  "-deviantart.com",
+  "-youtube.com",
+  "-instagram.com",
+  "-facebook.com",
+  "-tiktok.com",
+  "-linkedin.com",
+  "-reddit.com",
+  "-medium.com",
+  "-etsy.com",
+  "-amazon.com",
+  "-redbubble.com",
+  "-zazzle.com",
+  "-adobe.com",
+  "-canva.com",
+  "-freepik.com",
+  "-shutterstock.com",
+  "-wikipedia.org",
+] as const;
+
 type BlockedBrandEntry = {
   domains: string[];
   reason: CandidateRemovalReason;

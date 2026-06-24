@@ -24,7 +24,6 @@ Rules:
 - If the page is commercial or product-led, flag this once in section 2 with a single sentence on how it affects outreach. Do not repeat the commercial flag elsewhere.
 - Do not list generic exclusions (jobs, courses, agencies, spam directories, marketplaces, login pages, own domain). Those are handled elsewhere. In section 6, include only project-specific risks and avoid-notes that would change search or outreach strategy.
 - Say each important fact once in the most appropriate section. Do not restate embed strategy, key counts, or link hooks in multiple sections.
-- Do not generate search queries.
 - Do not optimize for paid links, link exchanges, or spammy backlink tactics.
 - Focus on legitimate editorial discovery and outreach opportunities.
 - Write in plain language. Use section headings exactly as listed below.
@@ -76,10 +75,12 @@ function formatExtractionStatus(extraction: FetchAndExtractResult): string {
   return `Extraction had issues: ${extraction.reason} — ${extraction.message}`;
 }
 
-export function buildBriefUserPrompt(extraction: FetchAndExtractResult): string {
+export function buildBriefUserPrompt(
+  extraction: FetchAndExtractResult,
+): string {
   const pageContent = extraction.ok
     ? extraction.contentMarkdown || extraction.contentText
-    : extraction.contentMarkdown ?? extraction.contentText ?? "";
+    : (extraction.contentMarkdown ?? extraction.contentText ?? "");
 
   const sections = BRIEF_SECTION_HEADINGS.map((heading) => `- ${heading}`).join(
     "\n",
