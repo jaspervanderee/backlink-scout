@@ -32,6 +32,7 @@ const BLOCKED_BRANDS: BlockedBrandEntry[] = [
   { domains: ["flickr.com"], reason: "blocked_platform" },
   { domains: ["deviantart.com"], reason: "blocked_platform" },
   { domains: ["dribbble.com"], reason: "blocked_platform" },
+  { domains: ["espn.com"], reason: "blocked_platform" },
 
   // Marketplaces and print-on-demand
   { domains: ["etsy.com", "etsy.co.uk"], reason: "blocked_marketplace" },
