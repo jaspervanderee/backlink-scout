@@ -28,8 +28,6 @@ The normal flow should remain simple:
 2. The tool reads and understands the project.
 3. The tool searches for and investigates potential domains.
 4. The user reviews ranked results with concise reasons and evidence.
-5. The user approves useful domains into the outreach kanban.
-6. The user manually tracks outreach progress.
 
 The user should not need to complete a structured project form.
 
@@ -185,4 +183,3 @@ Run the full pipeline against this benchmark after changes. Test actual outputs,
 - SEO authority or traffic metrics
 - Multi-user accounts and permissions
 - Complex automated learning from outcomes
-

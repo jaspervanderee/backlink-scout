@@ -26,7 +26,15 @@ export type CandidateRemovalReason =
   | "blocked_marketplace"
   | "blocked_stock_asset"
   | "blocked_template"
-  | "blocked_large_retail";
+  | "blocked_large_retail"
+  | "unreachable_url"
+  | "access_blocked";
+
+export type ValidateReachabilityResult = {
+  ok: true;
+  kept: KeptDomainCandidate[];
+  removed: RemovedDomainCandidate[];
+};
 
 export type RemovedDomainCandidate = DomainCandidateBase & {
   removalReason: CandidateRemovalReason;

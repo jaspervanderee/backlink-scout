@@ -167,5 +167,9 @@ export function formatRemovalReason(reason: CandidateRemovalReason): string {
       return "Blocked template";
     case "blocked_large_retail":
       return "Blocked large retail";
+    case "unreachable_url":
+      return "Unreachable URL";
+    case "access_blocked":
+      return "Access blocked";
   }
 }

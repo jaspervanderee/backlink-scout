@@ -56,7 +56,7 @@ export function CandidatePreparationPreview({
             <dd>{stats.uniqueDomainsBeforeFiltering}</dd>
           </div>
           <div>
-            <dt className="font-medium text-base-content/70">Kept domains</dt>
+            <dt className="font-medium text-base-content/70">Verified domains</dt>
             <dd>{stats.keptDomainsCount}</dd>
           </div>
           <div>
@@ -66,7 +66,7 @@ export function CandidatePreparationPreview({
         </dl>
 
         <section className="space-y-4">
-          <h3 className="font-medium">Kept domain candidates</h3>
+          <h3 className="font-medium">Verified domain candidates</h3>
           {kept.length === 0 ? (
             <p className="text-sm text-base-content/70">No kept domain candidates.</p>
           ) : (

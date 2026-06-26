@@ -4,12 +4,14 @@ import { useState, useTransition } from "react";
 import { createProspectingBrief } from "@/app/actions/create-brief";
 import { executeSearchPlan } from "@/app/actions/execute-search-plan";
 import { generateSearchPlan } from "@/app/actions/generate-search-plan";
+import { validateCandidates } from "@/app/actions/validate-candidates";
 import { SearchPlanPreview } from "@/app/components/search-plan-preview";
 import { CandidatePreparationPreview } from "@/app/components/candidate-preparation-preview";
 import { DomainInvestigationPreview } from "@/app/components/domain-investigation-preview";
 import { runDomainInvestigationBatch } from "@/app/components/run-domain-investigation-batch";
 import { SearchResultsPreview } from "@/app/components/search-results-preview";
 import { prepareCandidates } from "@/lib/candidates/prepare-candidates";
+import { mergeCandidatePreparation } from "@/lib/candidates/validate-reachability";
 import type { PrepareCandidatesResult } from "@/lib/candidates/types";
 import type { DomainInvestigationProgress } from "@/lib/domain-investigation/types";
 import type { SearchQueryResultGroup } from "@/lib/perplexity/types";
@@ -22,6 +24,7 @@ type FlowPhase =
   | "searchPlanLoading"
   | "searchPlanReady"
   | "searchExecutionLoading"
+  | "candidateValidationLoading"
   | "searchResultsReady"
   | "domainInvestigationLoading"
   | "error";
@@ -56,9 +59,15 @@ export function ProspectingFlow() {
     setDomainInvestigation(null);
   }
 
-  function applySearchResults(groups: SearchQueryResultGroup[]) {
+  async function finalizeSearchResults(groups: SearchQueryResultGroup[]) {
     setSearchResults(groups);
-    setCandidatePreparation(prepareCandidates(groups));
+    setPhase("candidateValidationLoading");
+
+    const preparation = prepareCandidates(groups);
+    const reachability = await validateCandidates(preparation.kept);
+
+    setCandidatePreparation(mergeCandidatePreparation(preparation, reachability));
+    setPhase("searchResultsReady");
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -147,9 +156,8 @@ export function ProspectingFlow() {
           setSearchExecutionError(result.message);
 
           if (result.groups.length > 0) {
-            applySearchResults(result.groups);
             setSearchExecutionWarnings([]);
-            setPhase("searchResultsReady");
+            await finalizeSearchResults(result.groups);
             return;
           }
 
@@ -157,9 +165,8 @@ export function ProspectingFlow() {
           return;
         }
 
-        applySearchResults(result.groups);
         setSearchExecutionWarnings(result.warnings);
-        setPhase("searchResultsReady");
+        await finalizeSearchResults(result.groups);
       } catch (caught) {
         setSearchExecutionError(
           caught instanceof Error
@@ -227,12 +234,14 @@ export function ProspectingFlow() {
     phase === "searchPlanLoading" ||
     phase === "searchPlanReady" ||
     phase === "searchExecutionLoading" ||
+    phase === "candidateValidationLoading" ||
     phase === "searchResultsReady";
 
   const isSearchPlanPhase =
     searchPlan !== null &&
     (phase === "searchPlanReady" ||
       phase === "searchExecutionLoading" ||
+      phase === "candidateValidationLoading" ||
       phase === "searchResultsReady");
 
   return (
@@ -362,10 +371,14 @@ export function ProspectingFlow() {
               disabled={isPending}
               onClick={handleRunSearches}
             >
-              {isPending && phase === "searchExecutionLoading" ? (
+              {isPending &&
+              (phase === "searchExecutionLoading" ||
+                phase === "candidateValidationLoading") ? (
                 <>
                   <span className="loading loading-spinner loading-sm" />
-                  Running Perplexity searches…
+                  {phase === "candidateValidationLoading"
+                    ? "Verifying candidate URLs…"
+                    : "Running Perplexity searches…"}
                 </>
               ) : (
                 "Run searches"
@@ -409,7 +422,7 @@ export function ProspectingFlow() {
                   Investigating kept domains…
                 </>
               ) : (
-                "Investigate kept domains"
+                "Investigate verified domains"
               )}
             </button>
           </div>
