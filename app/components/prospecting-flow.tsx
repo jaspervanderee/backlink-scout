@@ -4,14 +4,17 @@ import { useState, useTransition } from "react";
 import { createProspectingBrief } from "@/app/actions/create-brief";
 import { executeSearchPlan } from "@/app/actions/execute-search-plan";
 import { generateSearchPlan } from "@/app/actions/generate-search-plan";
+import { prescanCandidates } from "@/app/actions/prescan-candidates";
 import { validateCandidates } from "@/app/actions/validate-candidates";
 import { SearchPlanPreview } from "@/app/components/search-plan-preview";
+import { CandidatePrescanPreview } from "@/app/components/candidate-prescan-preview";
 import { CandidatePreparationPreview } from "@/app/components/candidate-preparation-preview";
 import { DomainInvestigationPreview } from "@/app/components/domain-investigation-preview";
 import { runDomainInvestigationBatch } from "@/app/components/run-domain-investigation-batch";
 import { SearchResultsPreview } from "@/app/components/search-results-preview";
 import { prepareCandidates } from "@/lib/candidates/prepare-candidates";
 import { mergeCandidatePreparation } from "@/lib/candidates/validate-reachability";
+import type { CandidatePrescanResult } from "@/lib/candidates/prescan";
 import type { PrepareCandidatesResult } from "@/lib/candidates/types";
 import type { DomainInvestigationProgress } from "@/lib/domain-investigation/types";
 import type { SearchQueryResultGroup } from "@/lib/perplexity/types";
@@ -45,6 +48,8 @@ export function ProspectingFlow() {
   );
   const [candidatePreparation, setCandidatePreparation] =
     useState<PrepareCandidatesResult | null>(null);
+  const [candidatePrescan, setCandidatePrescan] =
+    useState<CandidatePrescanResult | null>(null);
   const [domainInvestigation, setDomainInvestigation] =
     useState<DomainInvestigationProgress | null>(null);
   const [phase, setPhase] = useState<FlowPhase>("idle");
@@ -56,17 +61,24 @@ export function ProspectingFlow() {
     setSearchExecutionWarnings([]);
     setSearchExecutionError(null);
     setCandidatePreparation(null);
+    setCandidatePrescan(null);
     setDomainInvestigation(null);
   }
 
-  async function finalizeSearchResults(groups: SearchQueryResultGroup[]) {
+  async function finalizeSearchResults(
+    groups: SearchQueryResultGroup[],
+    plan: SearchPlan,
+  ) {
     setSearchResults(groups);
     setPhase("candidateValidationLoading");
 
     const preparation = prepareCandidates(groups);
     const reachability = await validateCandidates(preparation.kept);
+    const merged = mergeCandidatePreparation(preparation, reachability);
+    const prescan = await prescanCandidates(merged.kept, plan);
 
-    setCandidatePreparation(mergeCandidatePreparation(preparation, reachability));
+    setCandidatePreparation(merged);
+    setCandidatePrescan(prescan);
     setPhase("searchResultsReady");
   }
 
@@ -146,6 +158,7 @@ export function ProspectingFlow() {
     setSearchResults(null);
     setSearchExecutionWarnings([]);
     setCandidatePreparation(null);
+    setCandidatePrescan(null);
     setPhase("searchExecutionLoading");
 
     startTransition(async () => {
@@ -157,7 +170,7 @@ export function ProspectingFlow() {
 
           if (result.groups.length > 0) {
             setSearchExecutionWarnings([]);
-            await finalizeSearchResults(result.groups);
+            await finalizeSearchResults(result.groups, searchPlan);
             return;
           }
 
@@ -166,7 +179,7 @@ export function ProspectingFlow() {
         }
 
         setSearchExecutionWarnings(result.warnings);
-        await finalizeSearchResults(result.groups);
+        await finalizeSearchResults(result.groups, searchPlan);
       } catch (caught) {
         setSearchExecutionError(
           caught instanceof Error
@@ -179,18 +192,21 @@ export function ProspectingFlow() {
   }
 
   function handleInvestigateDomains() {
+    const investigationCandidates =
+      candidatePrescan?.investigationCandidates ?? [];
+
     if (
       !brief.trim() ||
       !searchPlan ||
       !searchResults ||
       !candidatePreparation ||
-      candidatePreparation.kept.length === 0
+      investigationCandidates.length === 0
     ) {
       return;
     }
 
     setDomainInvestigation({
-      total: candidatePreparation.kept.length,
+      total: investigationCandidates.length,
       completed: 0,
       inProgress: [],
       results: [],
@@ -202,7 +218,7 @@ export function ProspectingFlow() {
 
     void runDomainInvestigationBatch({
       brief,
-      candidates: candidatePreparation.kept,
+      candidates: investigationCandidates,
       searchPlan,
       searchResults,
       onProgress: (progress) => {
@@ -214,7 +230,7 @@ export function ProspectingFlow() {
       })
       .catch((caught) => {
         setDomainInvestigation((current) => ({
-          total: current?.total ?? candidatePreparation.kept.length,
+          total: current?.total ?? investigationCandidates.length,
           completed: current?.completed ?? 0,
           inProgress: [],
           results: current?.results ?? [],
@@ -377,7 +393,7 @@ export function ProspectingFlow() {
                 <>
                   <span className="loading loading-spinner loading-sm" />
                   {phase === "candidateValidationLoading"
-                    ? "Verifying candidate URLs…"
+                    ? "Preparing candidates…"
                     : "Running Perplexity searches…"}
                 </>
               ) : (
@@ -405,13 +421,17 @@ export function ProspectingFlow() {
         <>
           <CandidatePreparationPreview result={candidatePreparation} />
 
+          {candidatePrescan ? (
+            <CandidatePrescanPreview result={candidatePrescan} />
+          ) : null}
+
           <div className="flex flex-col gap-4">
             <button
               type="button"
               className="btn btn-primary w-full sm:w-auto"
               disabled={
                 (domainInvestigation?.isRunning ?? false) ||
-                candidatePreparation.kept.length === 0 ||
+                (candidatePrescan?.investigationCandidates.length ?? 0) === 0 ||
                 !searchPlan
               }
               onClick={handleInvestigateDomains}
@@ -419,10 +439,10 @@ export function ProspectingFlow() {
               {domainInvestigation?.isRunning ? (
                 <>
                   <span className="loading loading-spinner loading-sm" />
-                  Investigating kept domains…
+                  Investigating prescan-approved domains…
                 </>
               ) : (
-                "Investigate verified domains"
+                `Investigate prescan-approved domains (${ candidatePrescan?.investigationCandidates.length ?? 0 })`
               )}
             </button>
           </div>
