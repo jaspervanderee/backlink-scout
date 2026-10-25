@@ -40,3 +40,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# personal profile for pitch drafts
+/profile.md
+
+# Google service account key for the outreach sheet
+/google-service-account.json
+/approved-emails.md
+
+# regenerable eval run outputs (contain scraped third-party text)
+/evals/runs/*.json

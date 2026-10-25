@@ -16,7 +16,7 @@ export function getLlmConfig(): LlmConfig | null {
   return {
     provider: process.env.JUDGMENT_LLM_PROVIDER?.trim() || "deepseek",
     apiKey,
-    model: process.env.JUDGMENT_LLM_MODEL?.trim() || "deepseek-chat",
+    model: process.env.JUDGMENT_LLM_MODEL?.trim() || "deepseek-flash",
     baseUrl:
       process.env.JUDGMENT_LLM_BASE_URL?.trim() || DEFAULT_DEEPSEEK_BASE_URL,
   };

@@ -1,0 +1,31 @@
+[
+  {
+    "id": "batman",
+    "name": "Batman Logo Evolution",
+    "productUrl": "https://www.breen.studio/shop/movies/batman-logo-evolution-poster",
+    "guideUrl": null,
+    "competitors": ["popchart.co", "veryonbrand.com"],
+    "split": "holdout"
+  },
+  {
+    "id": "star-wars",
+    "name": "Star Wars Symbols",
+    "productUrl": "https://www.breen.studio/shop/movies/star-wars-poster",
+    "guideUrl": "https://www.breen.studio/blog/star-wars-symbols-explained",
+    "split": "tune"
+  },
+  {
+    "id": "world-cup",
+    "name": "World Cup",
+    "productUrl": "https://www.breen.studio/shop/football/world-cup-poster",
+    "guideUrl": null,
+    "split": "tune"
+  },
+  {
+    "id": "bitcoin-typefaces",
+    "name": "Bitcoin Typefaces",
+    "productUrl": "https://www.breen.studio/shop/business/bitcoin-typefaces",
+    "guideUrl": "https://www.breen.studio/blog/bitcoin-typefaces",
+    "split": "tune"
+  }
+]

@@ -42,6 +42,10 @@ Check [package.json](package.json) for installed versions. As of the last doc up
 
 Current flow: URL → brief → search plan → search results → candidate prep → domain investigation (developer preview). Match existing action and `lib/` boundaries when extending.
 
+Site check (`lib/site-check/`, on `/dev`): per-domain evidence summary — recent posts via RSS or search, outbound links, closest similar post, activity, submission routes and requirements, paid signals. Score changes against `evals/` with `npx tsx scripts/site-check.ts <project-id>`.
+
+Pitch drafts (`lib/pitch-draft/`) are written for non-poor sites from the gitignored `profile.md`. The outreach Google Sheet (`lib/outreach-sheet/`, `OUTREACH_SHEET_ID` + gitignored `google-service-account.json`) is read to flag contacted sites, and "Mark as sent" appends a row. Never write test rows to the real sheet.
+
 ## Server / client boundaries
 
 **Server components (default)** — pages and layout. No `"use client"` unless needed.

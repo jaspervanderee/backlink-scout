@@ -31,7 +31,16 @@ export function extractReadableContent(
   pageUrl: string,
 ): ExtractedContent | null {
   const { document } = parseHTML(html);
-  const article = new Readability(document, { charThreshold: 80 }).parse();
+  if (!document?.documentElement) {
+    return null;
+  }
+
+  let article: ReturnType<Readability["parse"]> = null;
+  try {
+    article = new Readability(document, { charThreshold: 80 }).parse();
+  } catch {
+    article = null;
+  }
 
   if (!article) {
     const metadata = extractMetadata(document, pageUrl);
@@ -50,7 +59,10 @@ export function extractReadableContent(
     };
   }
 
-  const contentRoot = parseHTML(article.content).document.body;
+  // linkedom leaves body empty when parsing a bare fragment, so wrap it in a full document.
+  const contentRoot = parseHTML(
+    `<!doctype html><html><body>${ article.content ?? "" }</body></html>`,
+  ).document.body;
   const metadata = extractMetadata(document, pageUrl, contentRoot);
   const contentMarkdown = turndown
     .turndown(article.content ?? "")

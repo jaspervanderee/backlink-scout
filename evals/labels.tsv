@@ -1,0 +1,109 @@
+project	domain	label	confidence	source	note
+batman	underconsideration.com	featured	high	manual	Brand New featured the print
+batman	theawesomer.com	featured	high	manual	Featured the print
+batman	penaddict.com	featured	high	organic	Linked the Batman print without outreach
+batman	flowingdata.com	good_target	high	manual	Data viz blog that regularly links outside visualizations; takes suggestions
+batman	logodesignlove.com	good_target	medium	manual	David Airey's logo blog; occasionally shares outside logo work
+batman	coolinfographics.com	good_target	high	manual	Curates outside infographics with source links
+batman	thedesignest.net	good_target	low	manual	Design blog; unverified
+batman	brandfabrik.com	not_a_fit	medium	manual	Brand agency
+batman	design-milk.com	good_target	medium	manual	Features outside design; also sells sponsored posts
+batman	itsnicethat.com	good_target	high	manual	Features independent design work; submission address
+batman	creativeboom.com	good_target	high	manual	Has a submit page and features independent creatives
+batman	abduzeedo.com	good_target	high	manual	Features outside design projects
+batman	thisiscolossal.com	good_target	medium	manual	Features outside art; prints are a weaker fit than fine art
+batman	neatorama.com	good_target	high	manual	Features quirky outside finds with links
+batman	coolhunting.com	good_target	low	manual	Curated; rarely picks small prints
+batman	thecoolector.com	good_target	high	manual	Product discovery blog with outbound links
+batman	thisiswhyimbroke.com	not_a_fit	high	manual	$250 submission fee
+batman	hiconsumption.com	good_target	medium	manual	Affiliate product roundups with outbound links
+batman	odditymall.com	good_target	high	manual	Features odd products with outbound links
+batman	wired.com	long_shot	high	manual	Large outlet; rarely features indie prints
+batman	trendhunter.com	good_target	medium	manual	Features many outside products; low link value
+batman	cbr.com	long_shot	medium	manual	Large entertainment news; occasionally covers fan art
+batman	core77.com	long_shot	medium	manual	Industrial design focus; prints are a weak fit
+batman	comicsbeat.com	good_target	low	manual	Smaller comics news site
+batman	denofgeek.com	long_shot	medium	manual	Large entertainment news
+batman	printmag.com	good_target	high	manual	Features graphic design and typography projects
+batman	screenrant.com	long_shot	high	manual	Large entertainment news; rarely links sellers
+batman	thepopverse.com	long_shot	low	manual	Covers merch; mostly licensed products
+batman	focus.knack.be	long_shot	medium	manual	Belgian culture magazine
+batman	nme.com	long_shot	high	manual	Large music outlet
+batman	gizmodo.com	long_shot	high	manual	Large tech outlet
+batman	comicsalliance.com	not_a_fit	medium	manual	Appears inactive since about 2017
+batman	boingboing.net	good_target	medium	manual	Shares outside finds from submissions
+batman	slashfilm.com	long_shot	medium	manual	Covers film posters but mostly official or Mondo
+batman	laughingsquid.com	good_target	high	manual	Features outside creative work with links
+batman	shortlist.com	long_shot	medium	manual	UK lifestyle outlet
+batman	geektyrant.com	good_target	high	manual	Regularly features fan art and posters
+batman	tomsguide.com	long_shot	high	manual	Tech outlet; poor fit
+batman	uncrate.com	good_target	low	manual	Highly curated product picks
+batman	blessthisstuff.com	good_target	medium	manual	Product discovery blog with outbound links
+batman	mensup.fr	long_shot	low	manual	French men's lifestyle; unverified
+batman	coolmaterial.com	good_target	medium	manual	Product discovery with outbound links
+batman	toy-people.com	long_shot	low	manual	Asian market
+batman	theculturednerd.org	good_target	low	manual	Mainly Instagram; unclear if the site links out
+batman	awesomestufftobuy.com	good_target	medium	manual	Has a submit form
+batman	neatstufftobuy.com	not_a_fit	medium	manual	Site has been discontinued
+batman	huffpost.com	long_shot	high	competitor_backlinks	Linked Pop Chart once; large outlet
+batman	fastcompany.com	long_shot	medium	competitor_backlinks	Co.Design linked Pop Chart; large outlet
+batman	cbc.ca	long_shot	high	competitor_backlinks	Linked Pop Chart once; large outlet
+batman	mashable.com	long_shot	high	competitor_backlinks	Linked Pop Chart once; large outlet
+batman	today.com	long_shot	high	competitor_backlinks	Gift guides; large outlet
+batman	thestreet.com	long_shot	medium	competitor_backlinks	Pitched a freelance writer instead of the outlet
+batman	parade.com	long_shot	medium	competitor_backlinks	Gift guides via freelance writers
+batman	timeout.com	long_shot	high	competitor_backlinks	City-focused; poor fit
+batman	slate.com	long_shot	high	competitor_backlinks	Large outlet
+batman	lifehacker.com	long_shot	high	competitor_backlinks	Large outlet; poor fit
+batman	mentalfloss.com	long_shot	medium	competitor_backlinks	Has covered infographic posters before
+batman	observer.com	long_shot	high	competitor_backlinks	Large outlet
+batman	complex.com	long_shot	high	competitor_backlinks	Large outlet
+batman	creativebloq.com	good_target	medium	competitor_backlinks	Features outside design; has a submissions address
+batman	thebatmanuniverse.net	good_target	medium	manual	Batman fan site; topic community
+batman	batman-on-film.com	good_target	medium	manual	Batman fan site; topic community
+batman	therealbatmanchronologyproject.com	good_target	low	manual	Niche Batman research blog
+star-wars	theawesomer.com	featured	high	manual	Featured the print (second feature)
+star-wars	laughingsquid.com	good_target	high	manual	Features outside creative work with links
+star-wars	thegadgetflow.com	not_a_fit	medium	manual	Paid listings
+world-cup	muz.li	good_target	high	backlink_scout	Accepts design suggestions
+world-cup	cultkits.com	good_target	low	backlink_scout	Football shirt culture; unverified
+world-cup	soccerbible.com	good_target	low	backlink_scout	Football culture; mostly brand content
+world-cup	lowerblock.com	good_target	low	backlink_scout	Football culture; unverified
+world-cup	itsnicethat.com	good_target	high	backlink_scout	README benchmark: promising
+world-cup	si.com	long_shot	high	backlink_scout	Large outlet
+world-cup	creativeboom.com	good_target	high	backlink_scout	Has a submit page and features independent creatives
+world-cup	yankodesign.com	long_shot	medium	backlink_scout	Product design focus; prints are a weak fit
+world-cup	creativereview.co.uk	good_target	low	backlink_scout	Features design work; selective (sheet listed .com, which only serves a redirect script)
+world-cup	inspirationgrid.com	good_target	high	backlink_scout	Features outside design projects
+world-cup	esquire.com	long_shot	high	backlink_scout	Large outlet
+world-cup	goal.com	long_shot	high	backlink_scout	Large outlet; the address was a sales inbox
+world-cup	thesefootballtimes.co	good_target	low	backlink_scout	Football writing; unclear if it features outside work (sheet listed .com, which is parked)
+world-cup	fourfourtwo.com	long_shot	high	backlink_scout	Large outlet
+world-cup	cultured.football	good_target	high	backlink_scout	README benchmark: promising
+world-cup	designboom.com	long_shot	medium	backlink_scout	Heavy submission volume; rarely picks prints
+world-cup	infographicjournal.com	good_target	medium	backlink_scout	README benchmark: promising or maybe
+world-cup	1thingaweek.com	not_a_fit	high	backlink_scout	Text based website, no images
+world-cup	ourculturemag.com	long_shot	medium	backlink_scout	Broad culture based
+world-cup	creativebloq.com	good_target	medium	backlink_scout	Features outside design; has a submissions address
+world-cup	footballcasestudy.com	good_target	low	backlink_scout	Unverified
+world-cup	kitscene.com	good_target	low	backlink_scout	Football kit community; unverified
+world-cup	transformmagazine.net	long_shot	low	backlink_scout	Branding trade magazine
+world-cup	phaidon.com	not_a_fit	high	readme_benchmark	README benchmark: prestige without an outreach path
+world-cup	graphis.com	not_a_fit	high	readme_benchmark	README benchmark: paid awards
+bitcoin-typefaces	blog.spoongraphics.co.uk	good_target	medium	unknown	Design tutorials blog; shares outside type work
+bitcoin-typefaces	fontsinuse.com	good_target	medium	llm_baseline	Takes submissions; custom glyphs may not fit their format
+bitcoin-typefaces	peopleofprint.com	good_target	high	llm_baseline	Features print and graphic design projects
+bitcoin-typefaces	itsnicethat.com	good_target	high	llm_baseline	Features independent design work
+bitcoin-typefaces	printmag.com	good_target	high	llm_baseline	Features graphic design and typography projects
+bitcoin-typefaces	bitcoin.design	good_target	low	llm_baseline	Community, not a publication; runs a ₿ symbol adoption initiative. Does it link out?
+bitcoin-typefaces	ilovetypography.com	good_target	medium	llm_baseline	Type blog; publishing less often lately
+bitcoin-typefaces	slanted.de	good_target	medium	llm_baseline	Typography magazine; news submissions need an account
+bitcoin-typefaces	the-brandidentity.com	good_target	low	llm_baseline	Features identity projects; a poster may not fit
+bitcoin-typefaces	designweek.co.uk	long_shot	medium	llm_baseline	Design industry news; mostly agency work
+bitcoin-typefaces	designtaxi.com	good_target	medium	llm_baseline	Design news that covers novel projects
+bitcoin-typefaces	kottke.org	good_target	low	llm_baseline	Links odd finds; very selective
+bitcoin-typefaces	booooooom.com	good_target	low	llm_baseline	Art community; some submission routes are paid
+bitcoin-typefaces	bitcoinmagazine.com	long_shot	medium	llm_baseline	Large crypto outlet; covered the ₿ logo history in 2020
+bitcoin-typefaces	type-01.com	good_target	medium	llm_baseline	Type-specialist site that features custom type
+bitcoin-typefaces	commarts.com	long_shot	low	llm_baseline	Exhibit section is free but highly selective
+bitcoin-typefaces	sourcetype.com	good_target	low	llm_baseline	Small type publisher; unverified
