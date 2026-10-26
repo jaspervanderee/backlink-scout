@@ -1,10 +1,10 @@
-import { getLlmClient } from "@/lib/llm";
-import type { SiteCheckSummary, SiteEvidence } from "@/lib/site-check/types";
-import { readProfile } from "./profile";
-import { PITCH_DRAFT_SYSTEM_PROMPT, buildPitchDraftUserPrompt } from "./prompt";
-import { readPublication } from "./read-publication";
-import { composePitchEmail, readPitchLinks, type PitchLinks } from "./template";
-import type { PitchChannel, PitchDraft, PitchFormField } from "./types";
+import { getLlmClient } from "../llm/index.ts";
+import type { SiteCheckSummary, SiteEvidence } from "../site-check/types.ts";
+import { readProfile } from "./profile.ts";
+import { PITCH_DRAFT_SYSTEM_PROMPT, buildPitchDraftUserPrompt } from "./prompt.ts";
+import { readPublication } from "./read-publication.ts";
+import { composePitchEmail, readPitchLinks, type PitchLinks } from "./template.ts";
+import type { PitchChannel, PitchDraft, PitchFormField } from "./types.ts";
 
 // Reasoning models spend part of this budget, and time, before any visible output.
 const DRAFT_MAX_TOKENS = 8_192;

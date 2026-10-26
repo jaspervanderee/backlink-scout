@@ -1,8 +1,8 @@
-import type { LlmClient, LlmCompletionOptions, LlmMessage } from "./types";
-import type { LlmConfig } from "./config";
-import { LlmEmptyResponseError } from "./empty-response-error";
-import { LlmTimeoutError } from "./timeout-error";
-import { LlmTruncatedResponseError } from "./truncated-response-error";
+import type { LlmClient, LlmCompletionOptions, LlmMessage } from "./types.ts";
+import type { LlmConfig } from "./config.ts";
+import { LlmEmptyResponseError } from "./empty-response-error.ts";
+import { LlmTimeoutError } from "./timeout-error.ts";
+import { LlmTruncatedResponseError } from "./truncated-response-error.ts";
 
 type ChatCompletionResponse = {
   choices?: Array<{

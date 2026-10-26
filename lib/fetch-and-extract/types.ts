@@ -26,7 +26,6 @@ export type FetchAndExtractSuccess = {
   finalUrl: string;
   statusCode: number;
   metadata: PageMetadata;
-  contentMarkdown: string;
   contentText: string;
 };
 
@@ -38,7 +37,6 @@ export type FetchAndExtractFailure = {
   reason: FetchFailureReason;
   message: string;
   metadata: PageMetadata | null;
-  contentMarkdown: string | null;
   contentText: string | null;
 };
 

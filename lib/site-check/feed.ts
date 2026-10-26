@@ -1,7 +1,7 @@
 import { DOMParser, parseHTML } from "linkedom";
-import { fetchStaticPage } from "@/lib/fetch-and-extract/fetch-static";
-import { collectOutboundDomains } from "./links";
-import type { SitePost } from "./types";
+import { fetchStaticPage } from "../fetch-and-extract/fetch-static.ts";
+import { collectOutboundDomains } from "./links.ts";
+import type { SitePost } from "./types.ts";
 
 const FEED_FETCH_TIMEOUT_MS = 10_000;
 const MAX_FEED_POSTS = 15;

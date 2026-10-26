@@ -2,7 +2,7 @@
 
 A personal outreach tool for [Breen](https://www.breen.studio). It makes pitching prints to publications faster, so more pitches go out each week without lowering their quality.
 
-The public page at `/` is a showcase. The working tool lives at `/dev`, which only runs locally or when `DEV_ROUTE_ENABLED=true`.
+The public showcase page lives in `site/` (static HTML on Vercel). The full tool runs on your own computer, because it uses your outreach sheet and profile.
 
 ## What it does
 
@@ -12,14 +12,16 @@ For a print (shop page and optional blog post) and a list of sites:
 2. Pitch draft. For good and unsure sites, writes an email (or form text) in Jasper's voice. The intro, links and closing are a fixed frame; the anchor, project paragraph and readers line are written for each publication from its own articles and the site check's angle.
 3. Outreach sheet. Flags sites already in the Google Sheet. "Mark as sent" writes the pitch to the print's tab.
 
-Next up: discovery, which finds new candidate sites for a print and skips everyone already contacted.
+Next up: discovery, which finds new candidate sites for a print and skips everyone already contacted. Later, a limited public demo so visitors can try the site check on their own project.
 
 ## Setup
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
+
+Then open http://localhost:3000. `npm run check` type-checks the code.
 
 Create `.env.local`:
 
@@ -42,7 +44,7 @@ Private files in the project root, all gitignored:
 `evals/` holds known answers for scoring changes: the prints (`projects.json`) and labelled sites (`labels.tsv`). Batman is the holdout print.
 
 ```bash
-npx tsx scripts/site-check.ts <project-id> [domain ...]
+node scripts/site-check.ts <project-id> [domain ...]
 ```
 
-Checks every labelled site for a print (or the domains given) and prints a score per label. `npx tsx scripts/outreach-sheet.ts` lists the sheet's tabs and contacted sites (read only).
+Checks every labelled site for a print (or the domains given) and prints a score per label. `node scripts/outreach-sheet.ts` lists the sheet's tabs and contacted sites (read only).

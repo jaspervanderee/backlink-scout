@@ -1,9 +1,9 @@
-// Usage: npx tsx scripts/site-check.ts <project-id> [domain ...]
+// Usage: node scripts/site-check.ts <project-id> [domain ...]
 // Without domains, checks every labeled domain for that project in evals/labels.tsv.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { checkSite } from "@/lib/site-check/check-site";
-import { buildProjectContext } from "@/lib/site-check/project-context";
-import type { SiteCheck } from "@/lib/site-check/types";
+import { checkSite } from "../lib/site-check/check-site.ts";
+import { buildProjectContext } from "../lib/site-check/project-context.ts";
+import type { SiteCheck } from "../lib/site-check/types.ts";
 
 const CONCURRENCY = 3;
 

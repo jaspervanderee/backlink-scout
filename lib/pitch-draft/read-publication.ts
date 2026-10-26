@@ -1,5 +1,5 @@
-import { fetchAndExtract } from "@/lib/fetch-and-extract";
-import type { SiteCheckSummary, SiteEvidence } from "@/lib/site-check/types";
+import { fetchAndExtract } from "../fetch-and-extract/index.ts";
+import type { SiteCheckSummary, SiteEvidence } from "../site-check/types.ts";
 
 const MAX_ARTICLES = 3;
 const MAX_ARTICLE_CHARS = 2_500;

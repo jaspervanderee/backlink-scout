@@ -1,5 +1,5 @@
 import type { Document } from "linkedom";
-import type { PageLink, PageMetadata } from "./types";
+import type { PageLink, PageMetadata } from "./types.ts";
 
 function getMetaContent(
   document: Document,

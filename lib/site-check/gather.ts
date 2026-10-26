@@ -1,14 +1,14 @@
 import { parseHTML } from "linkedom";
-import { fetchAndExtract } from "@/lib/fetch-and-extract";
-import { isBlockedPage } from "@/lib/fetch-and-extract/detect";
-import { fetchStaticPage } from "@/lib/fetch-and-extract/fetch-static";
-import type { PageLink } from "@/lib/fetch-and-extract/types";
-import { buildFeatureSearchQuery, runSiteSearch } from "./site-search";
-import { discoverFeedUrls, readFeed } from "./feed";
-import { extractHostname } from "@/lib/web/hostname";
-import { collectOutboundDomains } from "./links";
-import { findProtectedEmails, findRoutes, readRoutePages } from "./routes";
-import type { PostSource, SiteEvidence, SitePost } from "./types";
+import { fetchAndExtract } from "../fetch-and-extract/index.ts";
+import { isBlockedPage } from "../fetch-and-extract/detect.ts";
+import { fetchStaticPage } from "../fetch-and-extract/fetch-static.ts";
+import type { PageLink } from "../fetch-and-extract/types.ts";
+import { buildFeatureSearchQuery, runSiteSearch } from "./site-search.ts";
+import { discoverFeedUrls, readFeed } from "./feed.ts";
+import { extractHostname } from "../web/hostname.ts";
+import { collectOutboundDomains } from "./links.ts";
+import { findProtectedEmails, findRoutes, readRoutePages } from "./routes.ts";
+import type { PostSource, SiteEvidence, SitePost } from "./types.ts";
 
 const HOMEPAGE_TIMEOUT_MS = 12_000;
 const POST_PAGE_TIMEOUT_MS = 10_000;

@@ -1,18 +1,18 @@
-import { isBlockedPage, isThinContent } from "./detect";
-import { extractReadableContent } from "./extract";
-import { fetchStaticPage } from "./fetch-static";
+import { isBlockedPage, isThinContent } from "./detect.ts";
+import { extractReadableContent } from "./extract.ts";
+import { fetchStaticPage } from "./fetch-static.ts";
 import {
   DEFAULT_MAX_RESPONSE_BYTES,
   DEFAULT_MIN_CONTENT_LENGTH,
   DEFAULT_STATIC_TIMEOUT_MS,
   DEFAULT_USER_AGENT,
-} from "./constants";
+} from "./constants.ts";
 import type {
   FetchAndExtractFailure,
   FetchAndExtractOptions,
   FetchAndExtractResult,
   FetchFailureReason,
-} from "./types";
+} from "./types.ts";
 
 export type {
   FetchAndExtractFailure,
@@ -22,7 +22,7 @@ export type {
   FetchFailureReason,
   PageLink,
   PageMetadata,
-} from "./types";
+} from "./types.ts";
 
 function failure(
   partial: Partial<FetchAndExtractFailure> &
@@ -35,7 +35,6 @@ function failure(
     finalUrl: null,
     statusCode: null,
     metadata: null,
-    contentMarkdown: null,
     contentText: null,
     ...partial,
   };
@@ -124,7 +123,6 @@ export async function fetchAndExtract(
       message:
         "The page HTML could not be converted into readable content. Try a page with more visible text.",
       metadata: null,
-      contentMarkdown: null,
       contentText: null,
     });
   }
@@ -142,7 +140,6 @@ export async function fetchAndExtract(
       message:
         "This page blocked automated access or requires interaction. Try a different URL or enter a project summary manually.",
       metadata: extracted.metadata,
-      contentMarkdown: extracted.contentMarkdown,
       contentText: extracted.contentText,
     });
   }
@@ -157,7 +154,6 @@ export async function fetchAndExtract(
       message:
         "This page has too little readable text. It may be mostly visual or need JavaScript to render. Try a different URL or enter a project summary manually.",
       metadata: extracted.metadata,
-      contentMarkdown: extracted.contentMarkdown,
       contentText: extracted.contentText,
     });
   }
@@ -171,7 +167,6 @@ export async function fetchAndExtract(
       reason: "fetch_failed",
       message: `The server returned HTTP ${fetched.statusCode}.`,
       metadata: extracted.metadata,
-      contentMarkdown: extracted.contentMarkdown,
       contentText: extracted.contentText,
     });
   }
@@ -182,7 +177,6 @@ export async function fetchAndExtract(
     finalUrl: fetched.finalUrl,
     statusCode: fetched.statusCode,
     metadata: extracted.metadata,
-    contentMarkdown: extracted.contentMarkdown,
     contentText: extracted.contentText,
   };
 }

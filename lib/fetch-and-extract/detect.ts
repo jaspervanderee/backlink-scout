@@ -1,4 +1,4 @@
-import { BLOCKED_PAGE_PATTERNS } from "./constants";
+import { BLOCKED_PAGE_PATTERNS } from "./constants.ts";
 
 export function isBlockedPage(html: string, statusCode: number): boolean {
   if (statusCode === 401 || statusCode === 403 || statusCode === 429) {

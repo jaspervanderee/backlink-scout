@@ -1,4 +1,4 @@
-import type { SiteEvidence, SitePost } from "./types";
+import type { SiteEvidence, SitePost } from "./types.ts";
 
 const MAX_POSTS_IN_PROMPT = 15;
 

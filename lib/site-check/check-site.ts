@@ -1,9 +1,9 @@
-import { getLlmClient } from "@/lib/llm";
-import { draftPitch } from "@/lib/pitch-draft/draft-pitch";
-import type { PitchDraft } from "@/lib/pitch-draft/types";
-import { extractHostname } from "@/lib/web/hostname";
-import { gatherSiteEvidence } from "./gather";
-import { SITE_CHECK_SYSTEM_PROMPT, buildSiteCheckUserPrompt } from "./prompt";
+import { getLlmClient } from "../llm/index.ts";
+import { draftPitch } from "../pitch-draft/draft-pitch.ts";
+import type { PitchDraft } from "../pitch-draft/types.ts";
+import { extractHostname } from "../web/hostname.ts";
+import { gatherSiteEvidence } from "./gather.ts";
+import { SITE_CHECK_SYSTEM_PROMPT, buildSiteCheckUserPrompt } from "./prompt.ts";
 import type {
   OutsideWorkAnswer,
   SiteCheckResult,
@@ -11,7 +11,7 @@ import type {
   SiteEvidence,
   SiteLean,
   SubmissionRequirements,
-} from "./types";
+} from "./types.ts";
 
 const OUTSIDE_WORK_ANSWERS: OutsideWorkAnswer[] = ["yes", "rarely", "no", "unclear"];
 const LEANS: SiteLean[] = ["good", "unsure", "poor"];

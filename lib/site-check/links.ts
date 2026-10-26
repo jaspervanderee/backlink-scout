@@ -1,4 +1,4 @@
-import { extractHostname } from "@/lib/web/hostname";
+import { extractHostname } from "../web/hostname.ts";
 
 const IGNORED_HOST_SUFFIXES = [
   "facebook.com",

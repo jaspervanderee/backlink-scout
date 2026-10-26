@@ -1,8 +1,8 @@
-import { extractHostname } from "@/lib/web/hostname";
-import { getOutreachSheetConfig } from "./config";
-import { getAccessToken } from "./google-auth";
-import { requestSheets } from "./sheets-client";
-import type { ContactedSite, ReadOutreachSheetResult } from "./types";
+import { extractHostname } from "../web/hostname.ts";
+import { getOutreachSheetConfig } from "./config.ts";
+import { getAccessToken } from "./google-auth.ts";
+import { requestSheets } from "./sheets-client.ts";
+import type { ContactedSite, ReadOutreachSheetResult } from "./types.ts";
 
 const MIN_NAME_LENGTH_FOR_MATCH = 5;
 const DOMAIN_IN_TEXT_PATTERN = /(?:https?:\/\/)?(?:www\.)?([a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,})/i;

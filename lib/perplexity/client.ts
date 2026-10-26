@@ -1,6 +1,6 @@
-import { PERPLEXITY_DOMAIN_DENYLIST } from "@/lib/discovery/blocked-domains";
-import type { PerplexityConfig } from "./config";
-import type { PerplexitySearchPage, PerplexitySearchResponse } from "./types";
+import { PERPLEXITY_DOMAIN_DENYLIST } from "../discovery/blocked-domains.ts";
+import type { PerplexityConfig } from "./config.ts";
+import type { PerplexitySearchPage, PerplexitySearchResponse } from "./types.ts";
 
 const DEFAULT_SEARCH_TIMEOUT_MS = 30_000;
 

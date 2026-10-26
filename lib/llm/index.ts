@@ -1,9 +1,9 @@
-import { getLlmConfig } from "./config";
-import { createDeepSeekClient } from "./deepseek";
-import type { LlmClient } from "./types";
+import { getLlmConfig } from "./config.ts";
+import { createDeepSeekClient } from "./deepseek.ts";
+import type { LlmClient } from "./types.ts";
 
-export type { LlmClient, LlmCompletionOptions, LlmMessage } from "./types";
-export { getLlmConfig } from "./config";
+export type { LlmClient, LlmCompletionOptions, LlmMessage } from "./types.ts";
+export { getLlmConfig } from "./config.ts";
 
 export function getLlmClient(): LlmClient | null {
   const config = getLlmConfig();

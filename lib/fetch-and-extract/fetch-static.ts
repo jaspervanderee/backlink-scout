@@ -2,8 +2,8 @@ import {
   DEFAULT_MAX_RESPONSE_BYTES,
   DEFAULT_STATIC_TIMEOUT_MS,
   DEFAULT_USER_AGENT,
-} from "./constants";
-import type { FetchedPage } from "./types";
+} from "./constants.ts";
+import type { FetchedPage } from "./types.ts";
 
 export async function fetchStaticPage(
   url: string,

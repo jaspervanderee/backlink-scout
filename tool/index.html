@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Backlink Scout</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>Site check</h1>
+      <p class="muted">Paste sites you are considering. Each one gets a verdict, the submission route and a draft to edit.</p>
+    </header>
+
+    <form id="check-form" class="panel">
+      <div class="field-row">
+        <label>
+          <span>Print URL</span>
+          <input id="print-url" type="url" required placeholder="https://www.breen.studio/shop/…">
+        </label>
+        <label>
+          <span>Blog post URL (optional)</span>
+          <input id="guide-url" type="url" placeholder="https://www.breen.studio/blog/…">
+        </label>
+      </div>
+      <label>
+        <span>Sites to check (one per line)</span>
+        <textarea id="site-list" required rows="5" placeholder="laughingsquid.com&#10;itsnicethat.com"></textarea>
+      </label>
+      <button id="check-button" type="submit" class="button primary">Check sites</button>
+    </form>
+
+    <div id="errors" class="alert error" hidden></div>
+    <div id="results" class="results"></div>
+  </main>
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

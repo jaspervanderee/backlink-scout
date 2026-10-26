@@ -1,4 +1,4 @@
-import type { PitchDraft } from "@/lib/pitch-draft/types";
+import type { PitchDraft } from "../pitch-draft/types.ts";
 
 export type SitePost = {
   title: string;

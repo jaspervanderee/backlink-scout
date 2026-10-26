@@ -1,27 +1,10 @@
 import { Readability } from "@mozilla/readability";
 import { parseHTML } from "linkedom";
-import TurndownService from "turndown";
-import { extractMetadata } from "./metadata";
-import type { PageMetadata } from "./types";
-
-const turndown = new TurndownService({
-  headingStyle: "atx",
-  codeBlockStyle: "fenced",
-  bulletListMarker: "-",
-});
-
-turndown.addRule("preserveLinks", {
-  filter: "a",
-  replacement(content, node) {
-    const href = (node as HTMLAnchorElement).getAttribute("href");
-    const text = content.trim() || href || "";
-    return href ? `[${text}](${href})` : text;
-  },
-});
+import { extractMetadata } from "./metadata.ts";
+import type { PageMetadata } from "./types.ts";
 
 export type ExtractedContent = {
   metadata: PageMetadata;
-  contentMarkdown: string;
   contentText: string;
   articleTitle: string | null;
 };
@@ -53,7 +36,6 @@ export function extractReadableContent(
 
     return {
       metadata,
-      contentMarkdown: fallbackText,
       contentText: fallbackText,
       articleTitle: metadata.title,
     };
@@ -64,9 +46,6 @@ export function extractReadableContent(
     `<!doctype html><html><body>${ article.content ?? "" }</body></html>`,
   ).document.body;
   const metadata = extractMetadata(document, pageUrl, contentRoot);
-  const contentMarkdown = turndown
-    .turndown(article.content ?? "")
-    .trim();
   const contentText = (article.textContent ?? "")
     .replace(/\s+/g, " ")
     .trim();
@@ -78,7 +57,6 @@ export function extractReadableContent(
       description: article.excerpt || metadata.description,
       links: extractMetadata(document, pageUrl, contentRoot).links,
     },
-    contentMarkdown,
     contentText,
     articleTitle: article.title || metadata.title,
   };

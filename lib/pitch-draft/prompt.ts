@@ -1,6 +1,6 @@
-import type { SiteCheckSummary, SiteEvidence } from "@/lib/site-check/types";
-import type { PublicationPage, PublicationReading } from "./read-publication";
-import type { PitchChannel } from "./types";
+import type { SiteCheckSummary, SiteEvidence } from "../site-check/types.ts";
+import type { PublicationPage, PublicationReading } from "./read-publication.ts";
+import type { PitchChannel } from "./types.ts";
 
 const MAX_POST_TITLES = 12;
 

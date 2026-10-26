@@ -1,5 +1,5 @@
 import { createSign } from "node:crypto";
-import type { ServiceAccountKey } from "./config";
+import type { ServiceAccountKey } from "./config.ts";
 
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 const TOKEN_LIFETIME_SECONDS = 3_600;

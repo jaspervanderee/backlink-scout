@@ -1,7 +1,7 @@
-import { extractHostname } from "@/lib/web/hostname";
-import { getPerplexityConfig } from "@/lib/perplexity/config";
-import { searchWeb } from "@/lib/perplexity/client";
-import type { SiteSearchResult } from "./types";
+import { extractHostname } from "../web/hostname.ts";
+import { getPerplexityConfig } from "../perplexity/config.ts";
+import { searchWeb } from "../perplexity/client.ts";
+import type { SiteSearchResult } from "./types.ts";
 
 const MAX_SITE_SEARCH_RESULTS = 8;
 

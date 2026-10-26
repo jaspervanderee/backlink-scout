@@ -1,5 +1,5 @@
 import { parseHTML } from "linkedom";
-import { fetchStaticPage } from "@/lib/fetch-and-extract/fetch-static";
+import { fetchStaticPage } from "../fetch-and-extract/fetch-static.ts";
 
 const MAX_CONTENT_CHARS_PER_PAGE = 900;
 const INTRO_SELECTOR = '[class*="intro"], [class*="lead"], [class*="summary"]';

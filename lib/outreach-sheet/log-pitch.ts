@@ -1,7 +1,7 @@
-import { getOutreachSheetConfig } from "./config";
-import { getAccessToken } from "./google-auth";
-import { quoteRange, requestSheets } from "./sheets-client";
-import type { LogPitchResult, PitchLogEntry } from "./types";
+import { getOutreachSheetConfig } from "./config.ts";
+import { getAccessToken } from "./google-auth.ts";
+import { quoteRange, requestSheets } from "./sheets-client.ts";
+import type { LogPitchResult, PitchLogEntry } from "./types.ts";
 
 const SENT_STATUS = "sent";
 const MESSAGE_HEADER = "Message";

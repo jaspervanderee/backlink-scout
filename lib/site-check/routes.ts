@@ -1,10 +1,10 @@
 import { parseHTML } from "linkedom";
-import { extractReadableContent } from "@/lib/fetch-and-extract/extract";
-import { fetchStaticPage } from "@/lib/fetch-and-extract/fetch-static";
-import type { PageLink } from "@/lib/fetch-and-extract/types";
-import { isSameSite } from "./links";
-import { extractHostname } from "@/lib/web/hostname";
-import type { SiteRoute, SiteRouteKind, SubmissionPage } from "./types";
+import { extractReadableContent } from "../fetch-and-extract/extract.ts";
+import { fetchStaticPage } from "../fetch-and-extract/fetch-static.ts";
+import type { PageLink } from "../fetch-and-extract/types.ts";
+import { isSameSite } from "./links.ts";
+import { extractHostname } from "../web/hostname.ts";
+import type { SiteRoute, SiteRouteKind, SubmissionPage } from "./types.ts";
 
 const ROUTE_FETCH_TIMEOUT_MS = 10_000;
 const MAX_ROUTE_PAGES_TO_READ = 2;

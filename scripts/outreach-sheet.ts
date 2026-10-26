@@ -1,6 +1,6 @@
-// Usage: npx tsx scripts/outreach-sheet.ts
+// Usage: node scripts/outreach-sheet.ts
 // Read-only check of the outreach sheet: tabs, row counts and contacted domains.
-import { readOutreachSheet } from "@/lib/outreach-sheet/read-sheet";
+import { readOutreachSheet } from "../lib/outreach-sheet/read-sheet.ts";
 
 async function main() {
   process.loadEnvFile(".env.local");
