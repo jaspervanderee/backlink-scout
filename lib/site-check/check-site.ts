@@ -1,7 +1,7 @@
 import { getLlmClient } from "@/lib/llm";
 import { draftPitch } from "@/lib/pitch-draft/draft-pitch";
 import type { PitchDraft } from "@/lib/pitch-draft/types";
-import { extractHostname } from "@/lib/search-plan/domain";
+import { extractHostname } from "@/lib/web/hostname";
 import { gatherSiteEvidence } from "./gather";
 import { SITE_CHECK_SYSTEM_PROMPT, buildSiteCheckUserPrompt } from "./prompt";
 import type {

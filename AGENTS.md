@@ -11,7 +11,7 @@ Sections below override global preferences where they conflict. For product goal
 - “Frontend: vanilla JS, no framework, no build step” — does not apply here.
 - “Use classes generously” — does not apply; use functions and hooks in `.ts`/`.tsx`.
 - “4-space indentation” — use **2 spaces** in `.ts`, `.tsx`, and config files here.
-- Class-based file naming — use **kebab-case** filenames (`prospecting-flow.tsx`).
+- Class-based file naming — use **kebab-case** filenames (`site-check-panel.tsx`).
 
 ## Next.js
 
@@ -40,11 +40,11 @@ Check [package.json](package.json) for installed versions. As of the last doc up
 | `lib/<domain>/prompt.ts` | LLM prompt strings |
 | `app/globals.css` | Global tokens and theme only |
 
-Current flow: URL → brief → search plan → search results → candidate prep → domain investigation (developer preview). Match existing action and `lib/` boundaries when extending.
+Current flow on `/dev`: print URL + sites → site check → pitch draft → log to the outreach sheet. Discovery (finding new sites) is next and goes in `lib/discovery/`, which already holds the platform blocklist; search goes through `lib/perplexity/`. Match existing action and `lib/` boundaries when extending.
 
 Site check (`lib/site-check/`, on `/dev`): per-domain evidence summary — recent posts via RSS or search, outbound links, closest similar post, activity, submission routes and requirements, paid signals. Score changes against `evals/` with `npx tsx scripts/site-check.ts <project-id>`.
 
-Pitch drafts (`lib/pitch-draft/`) are written for non-poor sites from the gitignored `profile.md`. The outreach Google Sheet (`lib/outreach-sheet/`, `OUTREACH_SHEET_ID` + gitignored `google-service-account.json`) is read to flag contacted sites, and "Mark as sent" appends a row. Never write test rows to the real sheet.
+Pitch drafts (`lib/pitch-draft/`) are written for non-poor sites from the gitignored `profile.md`. The outreach Google Sheet (`lib/outreach-sheet/`, `OUTREACH_SHEET_ID` + gitignored `google-service-account.json`) is read to flag contacted sites, and "Mark as sent" writes a row below the data. Never write test rows to the real sheet.
 
 ## Server / client boundaries
 
@@ -52,9 +52,9 @@ Pitch drafts (`lib/pitch-draft/`) are written for non-poor sites from the gitign
 
 **Client components** — add `"use client"` when the file needs state, event handlers, or browser APIs (`clipboard`, `setTimeout`, etc.). All files in `app/components/` are client components today.
 
-**Server Actions** — live in `app/actions/` with `"use server"`. Keep them thin: light input checks, then delegate to `lib/`. Call from client components via `useTransition` or form actions, as in [prospecting-flow.tsx](app/components/prospecting-flow.tsx).
+**Server Actions** — live in `app/actions/` with `"use server"`. Keep them thin: light input checks, then delegate to `lib/`. Call from client components via `useTransition` or form actions, as in [site-check-panel.tsx](app/components/site-check-panel.tsx).
 
-**`lib/`** — all business logic. May be imported from client **only when pure/sync and secret-free** (e.g. `prepareCandidates`, format helpers). Config and API clients stay server-side.
+**`lib/`** — all business logic. May be imported from client **only when pure/sync and secret-free** (e.g. `extractHostname`, `chooseSheetTab`). Config and API clients stay server-side.
 
 **API routes** — none exist. Do not add `app/api/` unless Server Actions cannot fit (webhooks, third-party callbacks). Prefer Server Actions.
 
@@ -65,7 +65,7 @@ Pitch drafts (`lib/pitch-draft/`) are written for non-poor sites from the gitign
 - **daisyUI** for buttons, cards, badges, alerts, forms, collapses (`btn`, `card`, `badge`, `alert`, `form-control`, `input`, `collapse`).
 - **Tailwind utilities** for layout, spacing, responsive breakpoints.
 - **No new custom CSS** except global tokens in `app/globals.css`.
-- Copy existing patterns from [search-plan-preview.tsx](app/components/search-plan-preview.tsx) and [prospecting-flow.tsx](app/components/prospecting-flow.tsx).
+- Copy existing patterns from [site-check-card.tsx](app/components/site-check-card.tsx) and [site-check-panel.tsx](app/components/site-check-panel.tsx).
 - Mobile-first: `px-4 sm:px-6`, `w-full sm:w-auto`, `flex-wrap`, `sm:grid-cols-2`.
 - Do not add another UI library.
 

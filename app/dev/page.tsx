@@ -1,11 +1,5 @@
-import { ProspectingFlow } from "@/app/components/prospecting-flow";
 import { SiteCheckPanel } from "@/app/components/site-check-panel";
 
 export default function DevPage() {
-  return (
-    <>
-      <SiteCheckPanel />
-      <ProspectingFlow />
-    </>
-  );
+  return <SiteCheckPanel />;
 }

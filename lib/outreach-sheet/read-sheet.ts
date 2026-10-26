@@ -1,4 +1,4 @@
-import { extractHostname } from "@/lib/search-plan/domain";
+import { extractHostname } from "@/lib/web/hostname";
 import { getOutreachSheetConfig } from "./config";
 import { getAccessToken } from "./google-auth";
 import { requestSheets } from "./sheets-client";

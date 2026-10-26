@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "test": "npx tsx --test lib/search-plan/validate.test.ts lib/candidates/prescan.test.ts lib/candidates/prescan-link-probe.test.ts"
+    "lint": "eslint"
   },
   "dependencies": {
     "@mozilla/readability": "^0.6.0",

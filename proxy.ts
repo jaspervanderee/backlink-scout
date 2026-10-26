@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
 
 function isDevRouteEnabled() {
   if (process.env.NODE_ENV === "development") {
@@ -9,7 +8,7 @@ function isDevRouteEnabled() {
   return process.env.DEV_ROUTE_ENABLED === "true";
 }
 
-export function middleware(request: NextRequest) {
+export function proxy() {
   if (!isDevRouteEnabled()) {
     return new NextResponse(null, { status: 404 });
   }

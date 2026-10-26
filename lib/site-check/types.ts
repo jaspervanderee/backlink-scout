@@ -10,6 +10,19 @@ export type SitePost = {
 
 export type PostSource = "feed" | "search" | "none";
 
+export type SiteSearchResult = {
+  ok: boolean;
+  searchQuery: string;
+  evidence: Array<{
+    url: string;
+    title: string;
+    snippet: string;
+    date: string | null;
+    lastUpdated: string | null;
+  }>;
+  error: string | null;
+};
+
 export type SiteRouteKind = "submit" | "tips" | "contact" | "advertise";
 
 export type SiteRoute = {

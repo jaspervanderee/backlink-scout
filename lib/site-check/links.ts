@@ -1,4 +1,4 @@
-import { extractHostname } from "@/lib/search-plan/domain";
+import { extractHostname } from "@/lib/web/hostname";
 
 const IGNORED_HOST_SUFFIXES = [
   "facebook.com",

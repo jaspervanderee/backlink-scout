@@ -3,7 +3,7 @@ import { extractReadableContent } from "@/lib/fetch-and-extract/extract";
 import { fetchStaticPage } from "@/lib/fetch-and-extract/fetch-static";
 import type { PageLink } from "@/lib/fetch-and-extract/types";
 import { isSameSite } from "./links";
-import { extractHostname } from "@/lib/search-plan/domain";
+import { extractHostname } from "@/lib/web/hostname";
 import type { SiteRoute, SiteRouteKind, SubmissionPage } from "./types";
 
 const ROUTE_FETCH_TIMEOUT_MS = 10_000;

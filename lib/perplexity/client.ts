@@ -1,4 +1,4 @@
-import { PERPLEXITY_DOMAIN_DENYLIST } from "@/lib/candidates/blocked-domains";
+import { PERPLEXITY_DOMAIN_DENYLIST } from "@/lib/discovery/blocked-domains";
 import type { PerplexityConfig } from "./config";
 import type { PerplexitySearchPage, PerplexitySearchResponse } from "./types";
 
@@ -71,7 +71,6 @@ export async function searchWeb(
       body: JSON.stringify({
         query: options.query,
         max_results: options.maxResults,
-        search_context_size: "low",
         search_domain_filter: [...PERPLEXITY_DOMAIN_DENYLIST],
       }),
     });

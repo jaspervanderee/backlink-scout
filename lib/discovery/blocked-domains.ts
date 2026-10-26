@@ -1,4 +1,9 @@
-import type { CandidateRemovalReason } from "./types";
+export type BlockedDomainReason =
+  | "blocked_platform"
+  | "blocked_marketplace"
+  | "blocked_stock_asset"
+  | "blocked_template"
+  | "blocked_large_retail";
 
 /** Top slot-wasters for Perplexity search_domain_filter (API max 20). */
 export const PERPLEXITY_DOMAIN_DENYLIST = [
@@ -26,13 +31,12 @@ export const PERPLEXITY_DOMAIN_DENYLIST = [
 
 type BlockedBrandEntry = {
   domains: string[];
-  reason: CandidateRemovalReason;
+  reason: BlockedDomainReason;
 };
 
 const BLOCKED_BRANDS: BlockedBrandEntry[] = [
   // Specific subdomains first (first match wins)
   { domains: ["shop.tiktok.com"], reason: "blocked_marketplace" },
-  { domains: ["store.fifa.com"], reason: "blocked_large_retail" },
   { domains: ["express.adobe.com"], reason: "blocked_template" },
   { domains: ["stock.adobe.com"], reason: "blocked_template" },
   { domains: ["create.adobe.com"], reason: "blocked_template" },
@@ -56,7 +60,6 @@ const BLOCKED_BRANDS: BlockedBrandEntry[] = [
   { domains: ["flickr.com"], reason: "blocked_platform" },
   { domains: ["deviantart.com"], reason: "blocked_platform" },
   { domains: ["dribbble.com"], reason: "blocked_platform" },
-  { domains: ["espn.com"], reason: "blocked_platform" },
 
   // Marketplaces and print-on-demand
   { domains: ["etsy.com", "etsy.co.uk"], reason: "blocked_marketplace" },
@@ -141,7 +144,7 @@ function hostnameMatchesBlockedDomain(
 
 export function getBlockedDomainReason(
   hostname: string,
-): CandidateRemovalReason | null {
+): BlockedDomainReason | null {
   for (const entry of BLOCKED_BRANDS) {
     for (const domain of entry.domains) {
       if (hostnameMatchesBlockedDomain(hostname, domain)) {
@@ -151,25 +154,4 @@ export function getBlockedDomainReason(
   }
 
   return null;
-}
-
-export function formatRemovalReason(reason: CandidateRemovalReason): string {
-  switch (reason) {
-    case "invalid_domain":
-      return "Invalid domain";
-    case "blocked_platform":
-      return "Blocked platform";
-    case "blocked_marketplace":
-      return "Blocked marketplace";
-    case "blocked_stock_asset":
-      return "Blocked stock asset";
-    case "blocked_template":
-      return "Blocked template";
-    case "blocked_large_retail":
-      return "Blocked large retail";
-    case "unreachable_url":
-      return "Unreachable URL";
-    case "access_blocked":
-      return "Access blocked";
-  }
 }

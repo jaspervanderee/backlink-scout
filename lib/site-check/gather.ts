@@ -3,9 +3,9 @@ import { fetchAndExtract } from "@/lib/fetch-and-extract";
 import { isBlockedPage } from "@/lib/fetch-and-extract/detect";
 import { fetchStaticPage } from "@/lib/fetch-and-extract/fetch-static";
 import type { PageLink } from "@/lib/fetch-and-extract/types";
-import { buildFallbackSiteSearchQuery, runSiteSearch } from "@/lib/domain-investigation/site-search";
+import { buildFeatureSearchQuery, runSiteSearch } from "./site-search";
 import { discoverFeedUrls, readFeed } from "./feed";
-import { extractHostname } from "@/lib/search-plan/domain";
+import { extractHostname } from "@/lib/web/hostname";
 import { collectOutboundDomains } from "./links";
 import { findProtectedEmails, findRoutes, readRoutePages } from "./routes";
 import type { PostSource, SiteEvidence, SitePost } from "./types";
@@ -181,7 +181,7 @@ export async function gatherSiteEvidence(requestedDomain: string, now = new Date
     feedUrl = feed.feedUrl;
     posts = feed.posts;
   } else {
-    posts = await searchPosts(domain, buildFallbackSiteSearchQuery(domain));
+    posts = await searchPosts(domain, buildFeatureSearchQuery(domain));
     postSource = posts.length > 0 ? "search" : "none";
     if (!homepage.blocked) {
       notes.push("No RSS feed found; posts come from search results.");
